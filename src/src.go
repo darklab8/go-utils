@@ -1,5 +1,5 @@
 package src
 
-func hello() {
+func Hello() {
 	print("hello library world")
 }

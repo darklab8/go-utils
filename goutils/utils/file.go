@@ -9,27 +9,32 @@ import (
 	"github.com/darklab8/darklab_goutils/goutils/logus/utils_logus"
 )
 
-type File struct {
-	Filepath string
-	file     *os.File
-	lines    []string
+type file struct {
+	filepath string
+
+	file  *os.File
+	lines []string
 }
 
-func (f *File) OpenToReadF() *File {
-	file, err := os.Open(f.Filepath)
-	f.file = file
-
-	utils_logus.Log.CheckFatal(err, "failed to open", logus.FilePath(f.Filepath))
-	return f
+type fileRead struct {
+	file
 }
 
-func (f *File) Close() {
-	f.file.Close()
+func NewReadFile(filepath string, callback func(*fileRead)) {
+	f := &fileRead{file{filepath: filepath}}
+
+	file, err := os.Open(f.filepath)
+	f.file.file = file
+
+	utils_logus.Log.CheckFatal(err, "failed to open", logus.FilePath(f.filepath))
+	defer f.file.file.Close()
+
+	callback(f)
 }
 
-func (f *File) ReadLines() []string {
+func (f *fileRead) ReadLines() []string {
 
-	scanner := bufio.NewScanner(f.file)
+	scanner := bufio.NewScanner(f.file.file)
 	f.lines = []string{}
 	for scanner.Scan() {
 		f.lines = append(f.lines, scanner.Text())
@@ -37,21 +42,22 @@ func (f *File) ReadLines() []string {
 	return f.lines
 }
 
-func (f *File) FileReadLines() []string {
-	f.OpenToReadF()
-	defer f.Close()
-	return f.ReadLines()
+type fileWrite struct {
+	file
 }
 
-func (f *File) CreateToWriteF() *File {
-	file, err := os.Create(f.Filepath)
-	f.file = file
-	utils_logus.Log.CheckFatal(err, "failed to open ", logus.FilePath(f.Filepath))
+func NewWriteFile(filepath string, callback func(*fileWrite)) {
+	f := &fileWrite{file{filepath: filepath}}
 
-	return f
+	file, err := os.Create(f.filepath)
+	f.file.file = file
+	utils_logus.Log.CheckFatal(err, "failed to open ", logus.FilePath(f.filepath))
+	defer f.file.file.Close()
+	callback(f)
 }
-func (f *File) WritelnF(msg string) {
-	_, err := f.file.WriteString(fmt.Sprintf("%v\n", msg))
+
+func (f *fileWrite) WritelnF(msg string) {
+	_, err := f.file.file.WriteString(fmt.Sprintf("%v\n", msg))
 
 	utils_logus.Log.CheckFatal(err, "failed to write string to file")
 }

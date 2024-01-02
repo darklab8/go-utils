@@ -1,6 +1,6 @@
-package logus
+package utils_logus
 
-import "github.com/darklab8/darklab_goutils/goutils/logus/logus_types"
+import "github.com/darklab8/darklab_goutils/goutils/utils_logus/logus_types"
 
 const (
 	LEVEL_DEBUG logus_types.LogLevel = "DEBUG"

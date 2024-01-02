@@ -1,4 +1,4 @@
-package logus
+package utils_logus
 
 import (
 	// "darkbot/app/forumer/forum_types"

@@ -4,13 +4,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus"
+	"github.com/darklab8/darklab_goutils/goutils/utils_logus"
 )
 
 var (
-	Slogger *logus.Logger
+	Slogger *utils_logus.Logger
 )
 
 func init() {
-	Slogger = logus.NewLogger(logus.LEVEL_DEBUG, strings.ToLower(os.Getenv("GOUTILS_LOG_JSON")) == "true", false)
+	Slogger = utils_logus.NewLogger(utils_logus.LEVEL_DEBUG, strings.ToLower(os.Getenv("GOUTILS_LOG_JSON")) == "true", false)
 }

@@ -1,10 +1,12 @@
-package utils_logus
+package logus
 
 import (
 	// "darkbot/app/forumer/forum_types"
 	// "darkbot/app/settings/types"
 	"fmt"
 	"log/slog"
+
+	"github.com/darklab8/darklab_goutils/goutils/logus/logus_types"
 )
 
 func logGroupFiles() slog.Attr {
@@ -97,5 +99,11 @@ func Body(value []byte) SlogParam {
 func ErrorMsg(value string) SlogParam {
 	return func(c *SlogGroup) {
 		c.Params["error_message"] = string(value)
+	}
+}
+
+func Regex(value logus_types.RegExp) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params["regexp"] = fmt.Sprintf("%v", value)
 	}
 }

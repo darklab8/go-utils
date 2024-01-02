@@ -3,12 +3,14 @@ package worker_tests
 import (
 	"fmt"
 	"strconv"
-	"terrawatcher/watcher/logus"
-	"terrawatcher/watcher/worker"
-	"terrawatcher/watcher/worker/worker_logus"
-	"terrawatcher/watcher/worker/worker_types"
 	"testing"
 	"time"
+
+	"github.com/darklab8/darklab_goutils/goutils/logus"
+	"github.com/darklab8/darklab_goutils/goutils/logus/utils_logus"
+	"github.com/darklab8/darklab_goutils/goutils/worker"
+	"github.com/darklab8/darklab_goutils/goutils/worker/worker_logus"
+	"github.com/darklab8/darklab_goutils/goutils/worker/worker_types"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -28,10 +30,10 @@ func NewTaskTest(id worker_types.TaskID) *TaskTest {
 }
 
 func (data *TaskTest) RunTask(worker_id worker_types.WorkerID) error {
-	logus.Debug("task test started", worker_logus.WorkerID(worker_id), worker_logus.TaskID(data.GetID()))
+	utils_logus.Log.Debug("task test started", worker_logus.WorkerID(worker_id), worker_logus.TaskID(data.GetID()))
 	time.Sleep(time.Second * time.Duration(data.GetID()))
 	data.result = data.GetID() * 1
-	logus.Debug("task test finished", worker_logus.WorkerID(worker_id), worker_logus.TaskID(data.GetID()))
+	utils_logus.Log.Debug("task test finished", worker_logus.WorkerID(worker_id), worker_logus.TaskID(data.GetID()))
 	return nil
 }
 
@@ -56,7 +58,7 @@ func TestWorkerTemp(t *testing.T) {
 	done_count := 0
 	failed_count := 0
 	for task_number, task := range tasks {
-		logus.Debug(fmt.Sprintf("task.Done=%t", task.IsDone()), worker_logus.TaskID(worker_types.TaskID(task_number)))
+		utils_logus.Log.Debug(fmt.Sprintf("task.Done=%t", task.IsDone()), worker_logus.TaskID(worker_types.TaskID(task_number)))
 		if task.IsDone() {
 			done_count += 1
 		} else {

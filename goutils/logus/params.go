@@ -1,12 +1,10 @@
-package utils_logus
+package logus
 
 import (
-	// "darkbot/app/forumer/forum_types"
-	// "darkbot/app/settings/types"
 	"fmt"
 	"log/slog"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils_logus/logus_types"
+	"github.com/darklab8/darklab_goutils/goutils/logus/logus_types"
 )
 
 func logGroupFiles() slog.Attr {

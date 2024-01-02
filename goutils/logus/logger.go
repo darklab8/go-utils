@@ -1,15 +1,13 @@
-package utils_logus
+package logus
 
 import (
-	// "darkbot/app/settings/envs"
-	// "darkbot/app/settings/types"
 	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"runtime"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils_logus/logus_types"
+	"github.com/darklab8/darklab_goutils/goutils/logus/logus_types"
 )
 
 func (l *Logger) Debug(msg string, opts ...SlogParam) {

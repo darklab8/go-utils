@@ -1,5 +1,5 @@
-package src
+package goutils
 
-func Hello() {
+func Example() {
 	print("hello library world")
 }

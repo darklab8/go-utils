@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus/utils_logus"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 )
 
 func TmpRender(templateRef *template.Template, data interface{}) string {

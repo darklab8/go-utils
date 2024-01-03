@@ -4,7 +4,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus/utils_logus"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_logus"
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_types"

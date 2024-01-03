@@ -1,9 +1,9 @@
-package logus
+package logus_core
 
 import (
 	"testing"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus/logus_types"
+	"github.com/darklab8/darklab_goutils/goutils/logus_core/logus_types"
 )
 
 func TestSlogging(t *testing.T) {

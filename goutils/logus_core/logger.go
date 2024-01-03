@@ -1,4 +1,4 @@
-package logus
+package logus_core
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus/logus_types"
+	"github.com/darklab8/darklab_goutils/goutils/logus_core/logus_types"
 )
 
 func (l *Logger) Debug(msg string, opts ...SlogParam) {

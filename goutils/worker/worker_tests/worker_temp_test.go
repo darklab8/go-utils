@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus"
-	"github.com/darklab8/darklab_goutils/goutils/logus/utils_logus"
+	utils_logus1 "github.com/darklab8/darklab_goutils/goutils/logus_core"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 	"github.com/darklab8/darklab_goutils/goutils/worker"
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_logus"
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_types"
@@ -37,8 +37,8 @@ func (data *TaskTest) RunTask(worker_id worker_types.WorkerID) error {
 	return nil
 }
 
-func TaskResult(value worker_types.TaskID) logus.SlogParam {
-	return func(c *logus.SlogGroup) {
+func TaskResult(value worker_types.TaskID) utils_logus1.SlogParam {
+	return func(c *utils_logus1.SlogGroup) {
 		c.Params["task_result"] = strconv.Itoa(int(value))
 	}
 }

@@ -5,34 +5,35 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus"
-	"github.com/darklab8/darklab_goutils/goutils/logus/utils_logus"
+	"github.com/darklab8/darklab_goutils/goutils/logus_core"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_types"
 )
 
 type file struct {
-	filepath string
+	filepath utils_types.FilePath
 
 	file  *os.File
 	lines []string
 }
 
-type fileRead struct {
+type FileRead struct {
 	file
 }
 
-func NewReadFile(filepath string, callback func(*fileRead)) {
-	f := &fileRead{file{filepath: filepath}}
+func NewReadFile(filepath utils_types.FilePath, callback func(*FileRead)) {
+	f := &FileRead{file{filepath: filepath}}
 
-	file, err := os.Open(f.filepath)
+	file, err := os.Open(string(f.filepath))
 	f.file.file = file
 
-	utils_logus.Log.CheckFatal(err, "failed to open", logus.FilePath(f.filepath))
+	utils_logus.Log.CheckFatal(err, "failed to open", logus_core.FilePath(f.filepath))
 	defer f.file.file.Close()
 
 	callback(f)
 }
 
-func (f *fileRead) ReadLines() []string {
+func (f *FileRead) ReadLines() []string {
 
 	scanner := bufio.NewScanner(f.file.file)
 	f.lines = []string{}
@@ -42,22 +43,30 @@ func (f *fileRead) ReadLines() []string {
 	return f.lines
 }
 
-type fileWrite struct {
+type FileWrite struct {
 	file
 }
 
-func NewWriteFile(filepath string, callback func(*fileWrite)) {
-	f := &fileWrite{file{filepath: filepath}}
+func NewWriteFile(filepath utils_types.FilePath, callback func(*FileWrite)) {
+	f := &FileWrite{file{filepath: filepath}}
 
-	file, err := os.Create(f.filepath)
+	file, err := os.Create(string(f.filepath))
 	f.file.file = file
-	utils_logus.Log.CheckFatal(err, "failed to open ", logus.FilePath(f.filepath))
+	utils_logus.Log.CheckFatal(err, "failed to open ", logus_core.FilePath(f.filepath))
 	defer f.file.file.Close()
 	callback(f)
 }
 
-func (f *fileWrite) WritelnF(msg string) {
+func (f *FileWrite) WritelnF(msg string) {
 	_, err := f.file.file.WriteString(fmt.Sprintf("%v\n", msg))
 
 	utils_logus.Log.CheckFatal(err, "failed to write string to file")
+}
+
+func FileExists(filename utils_types.FilePath) bool {
+	info, err := os.Stat(string(filename))
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }

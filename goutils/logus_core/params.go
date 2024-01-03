@@ -1,10 +1,10 @@
-package logus
+package logus_core
 
 import (
 	"fmt"
 	"log/slog"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus/logus_types"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_types"
 )
 
 func logGroupFiles() slog.Attr {
@@ -63,7 +63,7 @@ func OptError(err error) SlogParam {
 	}
 }
 
-func FilePath(value string) SlogParam {
+func FilePath(value utils_types.FilePath) SlogParam {
 	return func(c *SlogGroup) {
 		c.Params["filepath"] = fmt.Sprintf("%v", value)
 	}
@@ -97,11 +97,5 @@ func Body(value []byte) SlogParam {
 func ErrorMsg(value string) SlogParam {
 	return func(c *SlogGroup) {
 		c.Params["error_message"] = string(value)
-	}
-}
-
-func Regex(value logus_types.RegExp) SlogParam {
-	return func(c *SlogGroup) {
-		c.Params["regexp"] = fmt.Sprintf("%v", value)
 	}
 }

@@ -45,6 +45,12 @@ func TestParam(value int) SlogParam {
 	}
 }
 
+func Any(key string, value any) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = fmt.Sprintf("%v", value)
+	}
+}
+
 func Expected(value any) SlogParam {
 	return func(c *SlogGroup) {
 		c.Params["expected"] = fmt.Sprintf("%v", value)
@@ -67,6 +73,10 @@ func FilePath(value utils_types.FilePath) SlogParam {
 	return func(c *SlogGroup) {
 		c.Params["filepath"] = fmt.Sprintf("%v", value)
 	}
+}
+
+func Filepaths(values []utils_types.FilePath) SlogParam {
+	return Items[utils_types.FilePath](values, "filepaths")
 }
 
 func Items[T any](value []T, item_name string) SlogParam {

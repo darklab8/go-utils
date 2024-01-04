@@ -14,7 +14,7 @@ func GetCurrentFile() utils_types.FilePath {
 	return utils_types.FilePath(filename)
 }
 
-func GetCurrrentFolder() utils_types.FilePath {
+func GetCurrentFolder() utils_types.FilePath {
 	_, filename, _, _ := runtime.Caller(1)
 	directory := filepath.Dir(filename)
 	return utils_types.FilePath(directory)
@@ -27,4 +27,19 @@ func GetProjectDir() utils_types.FilePath {
 	}
 	utils_logus.Log.CheckFatal(err, "unable to get workdir")
 	return utils_types.FilePath(path)
+}
+
+func GetCurrrentChildFolder(folder_name string) utils_types.FilePath {
+	_, filename, _, _ := runtime.Caller(2)
+	directory := filepath.Dir(filename)
+	test_directory := filepath.Join(directory, folder_name)
+	return utils_types.FilePath(test_directory)
+}
+
+func GetCurrrentTestFolder() utils_types.FilePath {
+	return GetCurrrentChildFolder("testdata")
+}
+
+func GetCurrrentTempFolder() utils_types.FilePath {
+	return GetCurrrentChildFolder("tempdata")
 }

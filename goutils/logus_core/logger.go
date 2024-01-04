@@ -52,6 +52,16 @@ func (l *Logger) Fatal(msg string, opts ...SlogParam) {
 		args = append(args, logGroupFiles())
 	}
 	l.logger.Error(msg, args...)
+	os.Exit(1)
+}
+
+func (l *Logger) Panic(msg string, opts ...SlogParam) {
+
+	args := append([]any{}, newSlogGroup(opts...))
+	if l.enable_file_showing {
+		args = append(args, logGroupFiles())
+	}
+	l.logger.Error(msg, args...)
 	panic(msg)
 }
 

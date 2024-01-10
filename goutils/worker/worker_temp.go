@@ -17,7 +17,7 @@ type ITask interface {
 	IsDone() bool
 	setError(error)
 	GetStatusCode() worker_types.TaskStatusCode
-	setAsDone()
+	SetAsDone()
 }
 
 type Task struct {
@@ -29,7 +29,7 @@ type Task struct {
 func (t *Task) GetID() worker_types.TaskID { return t.id }
 func (t *Task) IsDone() bool               { return t.done }
 
-func (t *Task) setAsDone()         { t.done = true }
+func (t *Task) SetAsDone()         { t.done = true }
 func (t *Task) setError(err error) { t.err = err }
 
 func (t *Task) GetStatusCode() worker_types.TaskStatusCode {
@@ -119,7 +119,7 @@ func (j *TaskPool) launchWorker(worker_id worker_types.WorkerID, tasks <-chan IT
 			task.setError(task_err)
 		}
 
-		task.setAsDone()
+		task.SetAsDone()
 		for _, task_observer := range j.task_observers {
 			task_observer(task)
 		}

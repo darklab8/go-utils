@@ -168,8 +168,9 @@ func NewLogger(
 
 	if enable_json_format {
 		logger.logger = slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: programLevel}))
+	} else {
+		logger.logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: programLevel}))
 	}
-	logger.logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: programLevel}))
 
 	logger.enable_file_showing = enable_file_showing
 	return logger

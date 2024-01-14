@@ -14,3 +14,7 @@ func Join(paths ...utils_types.FilePath) utils_types.FilePath {
 func Dir(path utils_types.FilePath) utils_types.FilePath {
 	return utils_types.FilePath(filepath.Dir(string(path)))
 }
+
+func Base(path utils_types.FilePath) utils_types.FilePath {
+	return utils_types.FilePath(filepath.Base(string(path)))
+}

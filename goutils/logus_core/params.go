@@ -3,6 +3,7 @@ package logus_core
 import (
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/darklab8/darklab_goutils/goutils/utils/utils_types"
 )
@@ -15,29 +16,46 @@ func logGroupFiles() slog.Attr {
 }
 
 type SlogGroup struct {
-	Params map[string]string
-	Attrs  []slog.Attr
+	Params map[string]any
+}
+
+func turnMapToAttrs(log_key string, params map[string]any) slog.Attr {
+	anies := []any{}
+	for key, value := range params {
+		switch v := value.(type) {
+		case string:
+			anies = append(anies, slog.String(key, v))
+		case int:
+			anies = append(anies, slog.Int(key, v))
+		case int64:
+			anies = append(anies, slog.Int64(key, v))
+		case float64:
+			anies = append(anies, slog.Float64(key, v))
+		case float32:
+			anies = append(anies, slog.Float64(key, float64(v)))
+		case bool:
+			anies = append(anies, slog.Bool(key, v))
+		case time.Time:
+			anies = append(anies, slog.Time(key, v))
+		case map[string]any:
+			anies = append(anies, turnMapToAttrs(key, v))
+		default:
+			panic("not supported type for key=" + key)
+		}
+	}
+
+	return slog.Group(log_key, anies...)
 }
 
 func (s SlogGroup) Render() slog.Attr {
-	anies := []any{}
-	for key, value := range s.Params {
-		anies = append(anies, key)
-		anies = append(anies, value)
-	}
-
-	for _, value := range s.Attrs {
-		anies = append(anies, value)
-	}
-
-	return slog.Group("extras", anies...)
+	return turnMapToAttrs("extras", s.Params)
 }
 
 type SlogParam func(r *SlogGroup)
 
 func newSlogGroup(opts ...SlogParam) slog.Attr {
 	client := &SlogGroup{
-		Params: make(map[string]string),
+		Params: make(map[string]any),
 	}
 	for _, opt := range opts {
 		opt(client)

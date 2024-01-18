@@ -16,6 +16,7 @@ func logGroupFiles() slog.Attr {
 
 type SlogGroup struct {
 	Params map[string]string
+	Attrs  []slog.Attr
 }
 
 func (s SlogGroup) Render() slog.Attr {
@@ -25,13 +26,19 @@ func (s SlogGroup) Render() slog.Attr {
 		anies = append(anies, value)
 	}
 
+	for _, value := range s.Attrs {
+		anies = append(anies, value)
+	}
+
 	return slog.Group("extras", anies...)
 }
 
 type SlogParam func(r *SlogGroup)
 
 func newSlogGroup(opts ...SlogParam) slog.Attr {
-	client := &SlogGroup{Params: make(map[string]string)}
+	client := &SlogGroup{
+		Params: make(map[string]string),
+	}
 	for _, opt := range opts {
 		opt(client)
 	}

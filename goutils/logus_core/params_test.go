@@ -23,8 +23,20 @@ func NestedParam(value string) SlogParam {
 	}
 }
 
+type Smth struct {
+	Value  string
+	Number int
+}
+
+func NestedStruct(value string) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params["nested"] = StructToMap(Smth{Value: "123", Number: 4})
+	}
+}
+
 func TestNested(t *testing.T) {
 	logger := NewLogger(LEVEL_DEBUG, logus_types.EnableJsonFormat(true), logus_types.EnableFileShowing(false))
 
 	logger.Debug("123", NestedParam("abc"))
+	logger.Debug("456", NestedStruct("abc"))
 }

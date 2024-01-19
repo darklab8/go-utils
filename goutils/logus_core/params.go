@@ -40,7 +40,7 @@ func turnMapToAttrs(log_key string, params map[string]any) slog.Attr {
 		case map[string]any:
 			anies = append(anies, turnMapToAttrs(key, v))
 		default:
-			panic("not supported type for key=" + key)
+			anies = append(anies, slog.String(key, fmt.Sprintf("%v", v)))
 		}
 	}
 
@@ -132,5 +132,23 @@ func Body(value []byte) SlogParam {
 func ErrorMsg(value string) SlogParam {
 	return func(c *SlogGroup) {
 		c.Params["error_message"] = string(value)
+	}
+}
+
+func Struct(value any) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params = StructToMap(value)
+	}
+}
+
+func NestedStruct(key string, value any) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = StructToMap(value)
+	}
+}
+
+func Map(value map[string]any) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params = value
 	}
 }

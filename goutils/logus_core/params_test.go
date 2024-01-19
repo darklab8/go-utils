@@ -24,13 +24,14 @@ func NestedParam(value string) SlogParam {
 }
 
 type Smth struct {
-	Value  string
-	Number int
+	Value1  string
+	Number1 int
 }
 
 func NestedStructTest(value string) SlogParam {
 	return func(c *SlogGroup) {
-		c.Params["nested"] = StructToMap(Smth{Value: "123", Number: 4})
+		c.Params["nested"] = StructToMap(Smth{Value1: "123", Number1: 4})
+		c.Params["not_nested"] = 345
 	}
 }
 

@@ -19,7 +19,7 @@ type SlogGroup struct {
 	Params map[string]any
 }
 
-func turnMapToAttrs(log_key string, params map[string]any) slog.Attr {
+func turnMapToAttrs(params map[string]any) []any {
 	anies := []any{}
 	for key, value := range params {
 		switch v := value.(type) {
@@ -38,22 +38,22 @@ func turnMapToAttrs(log_key string, params map[string]any) slog.Attr {
 		case time.Time:
 			anies = append(anies, slog.Time(key, v))
 		case map[string]any:
-			anies = append(anies, turnMapToAttrs(key, v))
+			anies = append(anies, slog.Group(key, turnMapToAttrs(v)...))
 		default:
 			anies = append(anies, slog.String(key, fmt.Sprintf("%v", v)))
 		}
 	}
 
-	return slog.Group(log_key, anies...)
+	return anies
 }
 
-func (s SlogGroup) Render() slog.Attr {
-	return turnMapToAttrs("extras", s.Params)
+func (s SlogGroup) Render() []any {
+	return turnMapToAttrs(s.Params)
 }
 
 type SlogParam func(r *SlogGroup)
 
-func newSlogGroup(opts ...SlogParam) slog.Attr {
+func newSlogArgs(opts ...SlogParam) []any {
 	client := &SlogGroup{
 		Params: make(map[string]any),
 	}

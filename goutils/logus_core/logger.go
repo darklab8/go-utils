@@ -147,10 +147,18 @@ type Logger struct {
 	enable_file_showing logus_types.EnableFileShowing
 }
 
+type LoggerParam func(r *Logger)
+
+func WithFileShowing(state bool) LoggerParam {
+	return func(logger *Logger) {
+		logger.enable_file_showing = logus_types.EnableFileShowing(state)
+	}
+}
+
 func NewLogger(
 	log_level_str logus_types.LogLevel,
 	enable_json_format logus_types.EnableJsonFormat,
-	enable_file_showing logus_types.EnableFileShowing,
+	options ...LoggerParam,
 ) *Logger {
 	var programLevel = new(slog.LevelVar) // Info by default
 
@@ -175,7 +183,9 @@ func NewLogger(
 		logger.logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: programLevel}))
 	}
 
-	logger.enable_file_showing = enable_file_showing
+	for _, opt := range options {
+		opt(logger)
+	}
 	return logger
 }
 

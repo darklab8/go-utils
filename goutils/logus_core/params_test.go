@@ -8,7 +8,7 @@ import (
 
 func TestSlogging(t *testing.T) {
 
-	logger := NewLogger(LEVEL_DEBUG, logus_types.EnableJsonFormat(false), logus_types.EnableFileShowing(false))
+	logger := NewLogger(LEVEL_DEBUG, logus_types.EnableJsonFormat(false))
 	logger.Debug("123")
 
 	logger.Debug("123", TestParam(456))
@@ -36,7 +36,7 @@ func NestedStructTest(value string) SlogParam {
 }
 
 func TestNested(t *testing.T) {
-	logger := NewLogger(LEVEL_DEBUG, logus_types.EnableJsonFormat(true), logus_types.EnableFileShowing(false))
+	logger := NewLogger(LEVEL_DEBUG, logus_types.EnableJsonFormat(true))
 
 	logger.Debug("123", NestedParam("abc"))
 	logger.Debug("456", NestedStructTest("abc"))

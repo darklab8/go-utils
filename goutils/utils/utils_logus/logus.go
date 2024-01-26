@@ -16,8 +16,8 @@ var (
 func init() {
 	Log = logus_core.NewLogger(
 		logus_types.LogLevel(os.Getenv("UTILS_LOG_LEVEL")),
-		logus_types.EnableJsonFormat(os.Getenv("UTILS_LOG_JSON") == "true"),
-		logus_types.EnableFileShowing(os.Getenv("UTILS_LOG_FILE_SHOWING") == "true"),
+		logus_types.EnableJsonFormat(logus_core.EnvTurnJSON),
+		logus_core.WithFileShowing(logus_core.EnvTurnFileShowing),
 	)
 }
 

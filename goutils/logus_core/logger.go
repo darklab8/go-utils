@@ -163,6 +163,8 @@ func NewLogger(
 		programLevel.Set(slog.LevelWarn)
 	case LEVEL_ERROR:
 		programLevel.Set(slog.LevelError)
+	default:
+		programLevel.Set(slog.LevelWarn)
 	}
 
 	logger := &Logger{}

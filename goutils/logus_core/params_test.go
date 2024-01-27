@@ -2,13 +2,12 @@ package logus_core
 
 import (
 	"testing"
-
-	"github.com/darklab8/darklab_goutils/goutils/logus_core/logus_types"
+	"time"
 )
 
 func TestSlogging(t *testing.T) {
 
-	logger := NewLogger(LEVEL_DEBUG, logus_types.EnableJsonFormat(false))
+	logger := NewLogger(WithLogLevel(LEVEL_DEBUG))
 	logger.Debug("123")
 
 	logger.Debug("123", TestParam(456))
@@ -36,8 +35,20 @@ func NestedStructTest(value string) SlogParam {
 }
 
 func TestNested(t *testing.T) {
-	logger := NewLogger(LEVEL_DEBUG, logus_types.EnableJsonFormat(true))
+	logger := NewLogger(WithLogLevel(LEVEL_DEBUG), WithJsonFormat(true))
 
 	logger.Debug("123", NestedParam("abc"))
 	logger.Debug("456", NestedStructTest("abc"))
+}
+
+func TestCopyingLoggers(t *testing.T) {
+	logger := NewLogger(WithLogLevel(LEVEL_DEBUG), WithJsonFormat(true))
+
+	logger1 := logger.WithFields(String("smth", "123"))
+	logger2 := logger1.WithFields(Int("smth2", 2))
+	logger3 := logger2.WithFields(Time("smth3", time.Now()))
+
+	logger1.Info("logger1 printed")
+	logger2.Info("logger2 printed")
+	logger3.Info("logger3 printed")
 }

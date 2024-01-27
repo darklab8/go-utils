@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/darklab8/darklab_goutils/goutils/logus_core"
-	"github.com/darklab8/darklab_goutils/goutils/logus_core/logus_types"
 	"github.com/darklab8/darklab_goutils/goutils/utils/utils_types"
 )
 
@@ -15,9 +14,7 @@ var (
 
 func init() {
 	Log = logus_core.NewLogger(
-		logus_types.LogLevel(os.Getenv("UTILS_LOG_LEVEL")),
-		logus_types.EnableJsonFormat(logus_core.EnvTurnJSON),
-		logus_core.WithFileShowing(logus_core.EnvTurnFileShowing),
+		logus_core.WithLogLevelStr(os.Getenv("UTILS_LOG_LEVEL")),
 	)
 }
 

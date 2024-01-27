@@ -76,6 +76,43 @@ func Any(key string, value any) SlogParam {
 	}
 }
 
+func String(key string, value string) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = value
+	}
+}
+
+func Int(key string, value int) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = value
+	}
+}
+func Int64(key string, value int) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = value
+	}
+}
+func Float32(key string, value float32) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = value
+	}
+}
+func Time(key string, value time.Time) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = value
+	}
+}
+func Float64(key string, value float64) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = value
+	}
+}
+func Bool(key string, value bool) SlogParam {
+	return func(c *SlogGroup) {
+		c.Params[key] = value
+	}
+}
+
 func Expected(value any) SlogParam {
 	return func(c *SlogGroup) {
 		c.Params["expected"] = fmt.Sprintf("%v", value)

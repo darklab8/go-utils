@@ -1,10 +1,12 @@
 package logus_core
 
-import "github.com/darklab8/darklab_goutils/goutils/logus_core/logus_types"
+type LogLevel string
+
+func (l LogLevel) ToStr() string { return string(l) }
 
 const (
-	LEVEL_DEBUG logus_types.LogLevel = "DEBUG"
-	LEVEL_INFO  logus_types.LogLevel = "INFO"
-	LEVEL_WARN  logus_types.LogLevel = "WARN"
-	LEVEL_ERROR logus_types.LogLevel = "ERROR"
+	LEVEL_DEBUG LogLevel = "DEBUG"
+	LEVEL_INFO  LogLevel = "INFO"
+	LEVEL_WARN  LogLevel = "WARN"
+	LEVEL_ERROR LogLevel = "ERROR"
 )

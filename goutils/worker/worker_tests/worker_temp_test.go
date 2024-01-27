@@ -2,7 +2,7 @@ package worker_tests
 
 import (
 	"fmt"
-	"strconv"
+	"log/slog"
 	"testing"
 	"time"
 
@@ -38,7 +38,7 @@ func (data *TaskTest) RunTask(worker_id worker_types.WorkerID) error {
 
 func TaskResult(value worker_types.TaskID) logcore.SlogParam {
 	return func(c *logcore.SlogGroup) {
-		c.Params["task_result"] = strconv.Itoa(int(value))
+		c.Append(slog.Int("task_result", int(value)))
 	}
 }
 

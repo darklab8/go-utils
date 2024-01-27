@@ -2,6 +2,7 @@ package worker
 
 import (
 	"fmt"
+	"log/slog"
 	"strings"
 
 	"github.com/darklab8/darklab_goutils/goutils/utils"
@@ -11,6 +12,6 @@ import (
 func LogusStatusCodes(tasks []ITask) logcore.SlogParam {
 	str_status_codes := utils.CompL(tasks, func(x ITask) string { return fmt.Sprintf("%d", x.GetStatusCode()) })
 	return func(c *logcore.SlogGroup) {
-		c.Params["status_codes"] = strings.Join(str_status_codes, ",")
+		c.Append(slog.String("status_codes", strings.Join(str_status_codes, ",")))
 	}
 }

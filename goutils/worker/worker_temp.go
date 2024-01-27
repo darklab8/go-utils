@@ -4,8 +4,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
-
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_logus"
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_types"
 )
@@ -99,7 +97,7 @@ func NewTaskPool(opts ...TaskPoolOption) *TaskPool {
 }
 
 func (j *TaskPool) launchWorker(worker_id worker_types.WorkerID, tasks <-chan ITask) {
-	utils_logus.Log.Info("worker started", worker_logus.WorkerID(worker_id))
+	worker_logus.Log.Info("worker started", worker_logus.WorkerID(worker_id))
 	for task := range tasks {
 
 		task_err := make(chan error, 1)
@@ -113,9 +111,9 @@ func (j *TaskPool) launchWorker(worker_id worker_types.WorkerID, tasks <-chan IT
 		// An alternative way to wait for multiple goroutines is to use a WaitGroup.
 		case <-time.After(time.Duration(j.taskTimeout) * time.Second):
 			task.setError(errors.New("timed out"))
-			utils_logus.Log.Error("finished tasks with timeout", worker_logus.StatusCode(CodeTimeout))
+			worker_logus.Log.Error("finished tasks with timeout", worker_logus.StatusCode(CodeTimeout))
 		case task_err := <-task_err:
-			utils_logus.Log.CheckError(task_err, "finished tasks with timeout", worker_logus.StatusCode(CodeFailure))
+			worker_logus.Log.CheckError(task_err, "finished tasks with timeout", worker_logus.StatusCode(CodeFailure))
 			task.setError(task_err)
 		}
 
@@ -124,7 +122,7 @@ func (j *TaskPool) launchWorker(worker_id worker_types.WorkerID, tasks <-chan IT
 			task_observer(task)
 		}
 	}
-	utils_logus.Log.Info("worker finished", worker_logus.WorkerID(worker_id))
+	worker_logus.Log.Info("worker finished", worker_logus.WorkerID(worker_id))
 }
 
 /// Temporal
@@ -169,7 +167,7 @@ func RunTasksInTempPool(tasks []ITask, opts ...TaskPoolOption) {
 		}
 	} else {
 		runTasksinTemporalWorkers(tasks, taskPool)
-		utils_logus.Log.Debug("results", LogusStatusCodes(tasks))
+		worker_logus.Log.Debug("results", LogusStatusCodes(tasks))
 
 		for _ = range tasks {
 			finished_tasks = append(finished_tasks, <-result_channel)
@@ -179,8 +177,8 @@ func RunTasksInTempPool(tasks []ITask, opts ...TaskPoolOption) {
 	for task_number, task := range tasks {
 		task_id := worker_types.TaskID(task_number)
 		if !task.IsDone() && !taskPool.allow_failed_tasks {
-			utils_logus.Log.Error("task failed", worker_logus.TaskID(task_id))
+			worker_logus.Log.Error("task failed", worker_logus.TaskID(task_id))
 		}
-		utils_logus.Log.Debug("task succeed", worker_logus.TaskID(task_id))
+		worker_logus.Log.Debug("task succeed", worker_logus.TaskID(task_id))
 	}
 }

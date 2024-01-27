@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 	"github.com/darklab8/darklab_goutils/goutils/worker"
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_logus"
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_types"
@@ -41,7 +40,7 @@ func TestWorkerPersistent(t *testing.T) {
 	done_count := 0
 	failed_count := 0
 	for task_number, task := range tasks {
-		utils_logus.Log.Debug(fmt.Sprintf("task.Done=%t", task.IsDone()), worker_logus.TaskID(worker_types.TaskID(task_number)), TaskResult(task.result))
+		worker_logus.Log.Debug(fmt.Sprintf("task.Done=%t", task.IsDone()), worker_logus.TaskID(worker_types.TaskID(task_number)), TaskResult(task.result))
 		if task.IsDone() {
 			done_count += 1
 		} else {

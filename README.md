@@ -5,10 +5,6 @@
 
 # Contains
 
-logus:
-
-- Static typed logging with slog
-
 worker:
 
 - in memory message queue workers

@@ -3,22 +3,24 @@ package utils_logus
 import (
 	"fmt"
 
-	"github.com/darklab8/darklab_goutils/goutils/logus_core"
 	"github.com/darklab8/darklab_goutils/goutils/utils/utils_types"
+	"github.com/darklab8/logusgo/logcore"
 )
 
-var (
-	Log *logus_core.Logger
-)
+var Log *logcore.Logger = logcore.NewLogger("goutils")
 
-func init() {
-	Log = logus_core.NewLogger(
-		"goutils",
-	)
-}
-
-func Regex(value utils_types.RegExp) logus_core.SlogParam {
-	return func(c *logus_core.SlogGroup) {
+func Regex(value utils_types.RegExp) logcore.SlogParam {
+	return func(c *logcore.SlogGroup) {
 		c.Params["regexp"] = fmt.Sprintf("%v", value)
 	}
+}
+
+func FilePath(value utils_types.FilePath) logcore.SlogParam {
+	return func(c *logcore.SlogGroup) {
+		c.Params["filepath"] = fmt.Sprintf("%v", value)
+	}
+}
+
+func Filepaths(values []utils_types.FilePath) logcore.SlogParam {
+	return logcore.Items[utils_types.FilePath](values, "filepaths")
 }

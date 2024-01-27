@@ -2,7 +2,6 @@ package utils_logus
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/darklab8/darklab_goutils/goutils/logus_core"
 	"github.com/darklab8/darklab_goutils/goutils/utils/utils_types"
@@ -14,7 +13,7 @@ var (
 
 func init() {
 	Log = logus_core.NewLogger(
-		logus_core.WithLogLevelStr(os.Getenv("UTILS_LOG_LEVEL")),
+		"goutils",
 	)
 }
 

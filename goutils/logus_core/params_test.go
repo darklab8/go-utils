@@ -7,7 +7,7 @@ import (
 
 func TestSlogging(t *testing.T) {
 
-	logger := NewLogger(WithLogLevel(LEVEL_DEBUG))
+	logger := NewLogger("test", WithLogLevel(LEVEL_DEBUG))
 	logger.Debug("123")
 
 	logger.Debug("123", TestParam(456))
@@ -35,14 +35,14 @@ func NestedStructTest(value string) SlogParam {
 }
 
 func TestNested(t *testing.T) {
-	logger := NewLogger(WithLogLevel(LEVEL_DEBUG), WithJsonFormat(true))
+	logger := NewLogger("test", WithLogLevel(LEVEL_DEBUG), WithJsonFormat(true))
 
 	logger.Debug("123", NestedParam("abc"))
 	logger.Debug("456", NestedStructTest("abc"))
 }
 
 func TestCopyingLoggers(t *testing.T) {
-	logger := NewLogger(WithLogLevel(LEVEL_DEBUG), WithJsonFormat(true))
+	logger := NewLogger("test", WithLogLevel(LEVEL_DEBUG), WithJsonFormat(true))
 
 	logger1 := logger.WithFields(String("smth", "123"))
 	logger2 := logger1.WithFields(Int("smth2", 2))

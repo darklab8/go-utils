@@ -6,12 +6,12 @@ import (
 	"strings"
 
 	"github.com/darklab8/darklab_goutils/goutils/utils"
-	"github.com/darklab8/logusgo/logcore"
+	"github.com/darklab8/go-typelog/typelog"
 )
 
-func LogusStatusCodes(tasks []ITask) logcore.SlogParam {
+func LogusStatusCodes(tasks []ITask) typelog.LogType {
 	str_status_codes := utils.CompL(tasks, func(x ITask) string { return fmt.Sprintf("%d", x.GetStatusCode()) })
-	return func(c *logcore.SlogGroup) {
+	return func(c *typelog.LogAtrs) {
 		c.Append(slog.String("status_codes", strings.Join(str_status_codes, ",")))
 	}
 }

@@ -5,12 +5,12 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
-	"github.com/darklab8/logusgo/logcore"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logger"
+	"github.com/darklab8/go-typelog/typelog"
 )
 
 func ShellRunArgs(program string, args ...string) {
-	utils_logus.Log.Debug(fmt.Sprintf("OK attempting to run: %s", program), logcore.Args(args))
+	utils_logger.Log.Debug(fmt.Sprintf("OK attempting to run: %s", program), typelog.Args(args))
 	executable, _ := exec.LookPath(program)
 
 	args = append([]string{""}, args...)
@@ -22,5 +22,5 @@ func ShellRunArgs(program string, args ...string) {
 	}
 	err := command.Run()
 
-	utils_logus.Log.CheckFatal(err, "failed to run shell command")
+	utils_logger.Log.CheckFatal(err, "failed to run shell command")
 }

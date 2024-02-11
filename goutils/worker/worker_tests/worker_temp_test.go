@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/darklab8/darklab_goutils/goutils/worker"
-	"github.com/darklab8/darklab_goutils/goutils/worker/worker_logger"
+	"github.com/darklab8/darklab_goutils/goutils/worker/worker_logus"
 	"github.com/darklab8/darklab_goutils/goutils/worker/worker_types"
 	"github.com/darklab8/go-typelog/typelog"
 
@@ -29,10 +29,10 @@ func NewTaskTest(id worker_types.TaskID) *TaskTest {
 }
 
 func (data *TaskTest) RunTask(worker_id worker_types.WorkerID) error {
-	worker_logger.Log.Debug("task test started", worker_logger.WorkerID(worker_id), worker_logger.TaskID(data.GetID()))
+	worker_logus.Log.Debug("task test started", worker_logus.WorkerID(worker_id), worker_logus.TaskID(data.GetID()))
 	time.Sleep(time.Second * time.Duration(data.GetID()))
 	data.result = data.GetID() * 1
-	worker_logger.Log.Debug("task test finished", worker_logger.WorkerID(worker_id), worker_logger.TaskID(data.GetID()))
+	worker_logus.Log.Debug("task test finished", worker_logus.WorkerID(worker_id), worker_logus.TaskID(data.GetID()))
 	return nil
 }
 
@@ -57,7 +57,7 @@ func TestWorkerTemp(t *testing.T) {
 	done_count := 0
 	failed_count := 0
 	for task_number, task := range tasks {
-		worker_logger.Log.Debug(fmt.Sprintf("task.Done=%t", task.IsDone()), worker_logger.TaskID(worker_types.TaskID(task_number)))
+		worker_logus.Log.Debug(fmt.Sprintf("task.Done=%t", task.IsDone()), worker_logus.TaskID(worker_types.TaskID(task_number)))
 		if task.IsDone() {
 			done_count += 1
 		} else {

@@ -1,4 +1,4 @@
-package utils_logger
+package utils_logus
 
 import (
 	"fmt"

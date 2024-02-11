@@ -3,12 +3,12 @@ package utils
 import (
 	"os"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logger"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 )
 
 func RegenerativeTest(callback func() error) error {
 	if os.Getenv("DARK_TEST_REGENERATE") != "true" {
-		utils_logger.Log.Debug("Skipping test data regenerative code")
+		utils_logus.Log.Debug("Skipping test data regenerative code")
 		return nil
 	}
 

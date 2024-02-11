@@ -6,7 +6,7 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logger"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 )
 
 func SleepAwaitCtrlC() {
@@ -16,7 +16,7 @@ func SleepAwaitCtrlC() {
 }
 
 func SleepForever() {
-	utils_logger.Log.Debug("awaiting smth forever in SleepForever")
+	utils_logus.Log.Debug("awaiting smth forever in SleepForever")
 	mu := sync.Mutex{}
 	mu.Lock()
 	mu.Lock()

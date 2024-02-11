@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"runtime"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logger"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 	"github.com/darklab8/darklab_goutils/goutils/utils/utils_types"
 )
 
@@ -25,7 +25,7 @@ func GetProjectDir() utils_types.FilePath {
 	if folder_override, ok := os.LookupEnv("AUTOGIT_PROJECT_FOLDER"); ok {
 		path = folder_override
 	}
-	utils_logger.Log.CheckFatal(err, "unable to get workdir")
+	utils_logus.Log.CheckFatal(err, "unable to get workdir")
 	return utils_types.FilePath(path)
 }
 

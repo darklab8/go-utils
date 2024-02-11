@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logger"
+	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 	"github.com/darklab8/darklab_goutils/goutils/utils/utils_types"
 )
 
@@ -26,7 +26,7 @@ func NewReadFile(filepath utils_types.FilePath, callback func(*FileRead)) {
 	file, err := os.Open(string(f.filepath))
 	f.file.file = file
 
-	utils_logger.Log.CheckFatal(err, "failed to open", utils_logger.FilePath(f.filepath))
+	utils_logus.Log.CheckFatal(err, "failed to open", utils_logus.FilePath(f.filepath))
 	defer f.file.file.Close()
 
 	callback(f)
@@ -51,7 +51,7 @@ func NewWriteFile(filepath utils_types.FilePath, callback func(*FileWrite)) {
 
 	file, err := os.Create(string(f.filepath))
 	f.file.file = file
-	utils_logger.Log.CheckFatal(err, "failed to open ", utils_logger.FilePath(f.filepath))
+	utils_logus.Log.CheckFatal(err, "failed to open ", utils_logus.FilePath(f.filepath))
 	defer f.file.file.Close()
 	callback(f)
 }
@@ -59,7 +59,7 @@ func NewWriteFile(filepath utils_types.FilePath, callback func(*FileWrite)) {
 func (f *FileWrite) WritelnF(msg string) {
 	_, err := f.file.file.WriteString(fmt.Sprintf("%v\n", msg))
 
-	utils_logger.Log.CheckFatal(err, "failed to write string to file")
+	utils_logus.Log.CheckFatal(err, "failed to write string to file")
 }
 
 func FileExists(filename utils_types.FilePath) bool {

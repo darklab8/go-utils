@@ -1,4 +1,4 @@
-package worker_logger
+package worker_logus
 
 import (
 	"log/slog"

@@ -1,4 +1,4 @@
-module github.com/darklab8/darklab_goutils
+module github.com/darklab8/go-utils
 
 go 1.21.1
 

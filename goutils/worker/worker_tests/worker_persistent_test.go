@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/darklab8/darklab_goutils/goutils/worker"
-	"github.com/darklab8/darklab_goutils/goutils/worker/worker_logus"
-	"github.com/darklab8/darklab_goutils/goutils/worker/worker_types"
+	"github.com/darklab8/go-utils/goutils/worker"
+	"github.com/darklab8/go-utils/goutils/worker/worker_logus"
+	"github.com/darklab8/go-utils/goutils/worker/worker_types"
 
 	"github.com/stretchr/testify/assert"
 )

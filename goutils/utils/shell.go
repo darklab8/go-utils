@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/darklab8/darklab_goutils/goutils/utils/utils_logus"
 	"github.com/darklab8/go-typelog/typelog"
+	"github.com/darklab8/go-utils/goutils/utils/utils_logus"
 )
 
 func ShellRunArgs(program string, args ...string) {

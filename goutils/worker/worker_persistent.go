@@ -1,7 +1,7 @@
 package worker
 
 import (
-	"github.com/darklab8/darklab_goutils/goutils/worker/worker_types"
+	"github.com/darklab8/go-utils/goutils/worker/worker_types"
 )
 
 type TaskPoolPeristent struct {

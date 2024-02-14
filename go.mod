@@ -3,7 +3,7 @@ module github.com/darklab8/go-utils
 go 1.21.1
 
 require (
-	github.com/darklab8/go-typelog v0.3.2
+	github.com/darklab8/go-typelog v0.3.3
 	github.com/stretchr/testify v1.8.4
 )
 

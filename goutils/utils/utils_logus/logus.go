@@ -23,5 +23,5 @@ func FilePath(value utils_types.FilePath) typelog.LogType {
 }
 
 func Filepaths(values []utils_types.FilePath) typelog.LogType {
-	return typelog.Items[utils_types.FilePath](values, "filepaths")
+	return typelog.Items[utils_types.FilePath]("filepaths", values)
 }

@@ -151,9 +151,15 @@ func runTasksinTemporalWorkers(tasks []ITask, j *TaskPool) {
 func RunTasksInTempPool(tasks []ITask, opts ...TaskPoolOption) {
 	numTasks := len(tasks)
 	result_channel := make(chan ITask, numTasks)
-	taskPool := NewTaskPool(WithTaskObServer(func(task ITask) {
-		result_channel <- task
-	}))
+
+	total_options := []TaskPoolOption{
+		WithTaskObServer(func(task ITask) {
+			result_channel <- task
+		}),
+	}
+
+	total_options = append(total_options, opts...)
+	taskPool := NewTaskPool(total_options...)
 	finished_tasks := []ITask{}
 
 	/*

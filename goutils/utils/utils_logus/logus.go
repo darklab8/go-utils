@@ -8,7 +8,7 @@ import (
 	"github.com/darklab8/go-utils/goutils/utils/utils_types"
 )
 
-var Log *typelog.Logger = typelog.NewLogger("goutils")
+var Log *typelog.Logger = typelog.NewLogger("utils")
 
 func Regex(value utils_types.RegExp) typelog.LogType {
 	return func(c *typelog.LogAtrs) {

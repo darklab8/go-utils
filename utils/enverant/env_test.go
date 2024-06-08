@@ -27,8 +27,8 @@ func TestReading(t *testing.T) {
 
 	fmt.Println(os.Getwd())
 	environ := NewEnverant(WithEnvFile(filepath.Join("testdata", "env.json")))
-	// envs := GetEnvs(environ)
-	// fmt.Println(envs)
+	envs := GetEnvs(environ)
+	fmt.Println(envs)
 
 	fmt.Println(environ.GetStr("WORKDIR"))
 

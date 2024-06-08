@@ -5,7 +5,6 @@ Manager for getting values from Environment variables
 */
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -108,11 +107,7 @@ func (e *Enverant) GetString(key string, opts ...ValueOption) (string, bool) {
 	}
 
 	if value, ok := os.LookupEnv(key); ok {
-		return value, true
-	}
-
-	if value, ok := e.file_envs[key]; ok {
-		return EnrichStr(value.(string)), true
+		return EnrichStr(value), true
 	}
 
 	if params.default_ != nil {
@@ -155,17 +150,6 @@ func (e *Enverant) GetBoolean(key string, opts ...ValueOption) (bool, bool) {
 		return value == "true", true
 	}
 
-	if value, ok := e.file_envs[key]; ok {
-		switch v := value.(type) {
-		case bool:
-			return v, true
-		case string:
-			return v == "true", true
-		default:
-			panic(fmt.Sprintln("unrecognized type for value", v, " in GetBoolOr"))
-		}
-	}
-
 	if params.default_ != nil {
 		return params.default_.(bool), true
 	}
@@ -206,21 +190,6 @@ func (e *Enverant) GetInteger(key string, opts ...ValueOption) (int, bool) {
 		int_value, err := strconv.Atoi(value)
 		utils_logus.Log.CheckPanic(err, "expected to be int", typelog.String("key", key))
 		return int_value, true
-	}
-
-	if value, ok := e.file_envs[key]; ok {
-		switch v := value.(type) {
-		case int:
-			return v, true
-		case float64:
-			return int(v), true
-		case string:
-			int_value, err := strconv.Atoi(v)
-			utils_logus.Log.CheckPanic(err, "expected to be int", typelog.String("key", key))
-			return int_value, true
-		default:
-			panic(fmt.Sprintln("unrecognized type for value", v, " in GetIntOr"))
-		}
 	}
 
 	if params.default_ != nil {

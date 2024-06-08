@@ -20,7 +20,7 @@ func TestReading(t *testing.T) {
 	envs := EnvConf{
 		SomeStr:  environ.GetStr("SOME_STR"),
 		SomeInt:  environ.GetInt("SOME_INT"),
-		SomeBool: environ.GetBoolOr("SOME_BOOL", false),
+		SomeBool: environ.GetBool("SOME_BOOL", OrBool(false)),
 	}
 	fmt.Println(envs)
 

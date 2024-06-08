@@ -44,6 +44,13 @@ func WithValidate(validate bool) EnverantOption {
 	}
 }
 
+func (m *Enverant) GetValidating() *Enverant {
+	var clone *Enverant = &Enverant{}
+	*clone = *m
+	clone.validate_missing = true
+	return clone
+}
+
 func EnrichStr(value string) string {
 	// unhardcode later
 	if strings.Contains(value, "${env:HOME}") {
@@ -73,6 +80,11 @@ func OrBool(default_ bool) ValueOption {
 	return func(m *ValueParams) {
 		m.default_ = default_
 	}
+}
+
+func (e *Enverant) GetStrOr(key string, default_ string, opts ...ValueOption) string {
+	value, _ := e.GetString(key, append([]ValueOption{OrStr(default_)}, opts...)...)
+	return value
 }
 
 func (e *Enverant) GetStr(key string, opts ...ValueOption) string {
@@ -112,6 +124,11 @@ func (e *Enverant) GetString(key string, opts ...ValueOption) (string, bool) {
 	}
 
 	return "", false
+}
+
+func (e *Enverant) GetBoolOr(key string, default_ bool, opts ...ValueOption) bool {
+	value, _ := e.GetBoolean(key, append([]ValueOption{OrBool(default_)}, opts...)...)
+	return value
 }
 
 func (e *Enverant) GetBool(key string, opts ...ValueOption) bool {
@@ -158,6 +175,11 @@ func (e *Enverant) GetBoolean(key string, opts ...ValueOption) (bool, bool) {
 	}
 
 	return false, false
+}
+
+func (e *Enverant) GetIntOr(key string, default_ int, opts ...ValueOption) int {
+	value, _ := e.GetInteger(key, append([]ValueOption{OrInt(default_)}, opts...)...)
+	return value
 }
 
 func (e *Enverant) GetInt(key string, opts ...ValueOption) int {

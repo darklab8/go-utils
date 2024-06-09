@@ -26,7 +26,8 @@ func GetEnvs(environ *Enverant) EnvConf {
 func TestReading(t *testing.T) {
 
 	fmt.Println(os.Getwd())
-	environ := NewEnverant(WithEnvFile(filepath.Join("testdata", "env.json")))
+	os.Setenv("ENVERANT_ENV_FILE", filepath.Join("testdata", "env.json"))
+	environ := NewEnverant()
 	envs := GetEnvs(environ)
 	fmt.Println(envs)
 

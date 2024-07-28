@@ -1,6 +1,6 @@
 module github.com/darklab8/go-utils
 
-go 1.21.1
+go 1.22.5
 
 require (
 	github.com/darklab8/go-typelog v0.3.3

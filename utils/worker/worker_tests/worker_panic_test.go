@@ -42,8 +42,8 @@ func TestPanic(t *testing.T) {
 	}
 
 	worker.RunTasksInTempPool(
+		"test_panic",
 		tasks,
-		worker.WithAllowFailedTasks(),
 		worker.WithDisableParallelism(false),
 	)
 

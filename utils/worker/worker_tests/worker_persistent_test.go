@@ -15,10 +15,10 @@ func TestWorkerPersistent(t *testing.T) {
 	result_channel := make(chan worker.ITask)
 
 	taskPool := worker.NewTaskPoolPersistent(
+		"test_worker_persistent",
 		worker.WithTaskObServer(func(task worker.ITask) {
 			result_channel <- task
 		}),
-		worker.WithAllowFailedTasks(),
 		worker.WithDisableParallelism(false),
 	)
 

@@ -51,10 +51,10 @@ const (
 )
 
 type TaskPool struct {
+	name        string
 	taskTimeout worker_types.Seconds
 	numWorkers  int
 
-	allow_failed_tasks  bool
 	disable_parallelism worker_types.DebugDisableParallelism
 
 	task_observers []func(task ITask)
@@ -65,12 +65,6 @@ type TaskPoolOption func(r *TaskPool)
 func WithTaskObServer(task_observer func(task ITask)) TaskPoolOption {
 	return func(c *TaskPool) {
 		c.task_observers = append(c.task_observers, task_observer)
-	}
-}
-
-func WithAllowFailedTasks() TaskPoolOption {
-	return func(c *TaskPool) {
-		c.allow_failed_tasks = true
 	}
 }
 
@@ -86,8 +80,9 @@ func WithDisableParallelism(disable_parallelism worker_types.DebugDisableParalle
 	return func(c *TaskPool) { c.disable_parallelism = disable_parallelism }
 }
 
-func NewTaskPool(opts ...TaskPoolOption) *TaskPool {
+func NewTaskPool(name string, opts ...TaskPoolOption) *TaskPool {
 	j := &TaskPool{
+		name:        name,
 		numWorkers:  3,
 		taskTimeout: 60 * 30,
 	}
@@ -106,9 +101,11 @@ func (j *TaskPool) launchWorker(worker_id worker_types.WorkerID, tasks <-chan IT
 		task_err := make(chan error, 1)
 		go func() {
 			defer func() {
-				if !j.allow_failed_tasks {
-					return
-				}
+				loggus := worker_logus.Log.WithFields(
+					typelog.String("task_pool_name", j.name),
+				)
+				loggus.Info("initialized worker pool with tasks allowed to fail=")
+
 				if r := recover(); r != nil {
 					logus.Log.Error("Recovered in doRunf", typelog.Any("panic", r))
 					task_err <- errors.New(fmt.Sprintln("task paniced", r))
@@ -160,7 +157,7 @@ func runTasksinTemporalWorkers(tasks []ITask, j *TaskPool) {
 	close(tasks_channel)
 }
 
-func RunTasksInTempPool(tasks []ITask, opts ...TaskPoolOption) {
+func RunTasksInTempPool(name string, tasks []ITask, opts ...TaskPoolOption) error {
 	numTasks := len(tasks)
 	result_channel := make(chan ITask, numTasks)
 
@@ -171,7 +168,7 @@ func RunTasksInTempPool(tasks []ITask, opts ...TaskPoolOption) {
 	}
 
 	total_options = append(total_options, opts...)
-	taskPool := NewTaskPool(total_options...)
+	taskPool := NewTaskPool(name, total_options...)
 	finished_tasks := []ITask{}
 
 	/*
@@ -194,9 +191,11 @@ func RunTasksInTempPool(tasks []ITask, opts ...TaskPoolOption) {
 
 	for task_number, task := range tasks {
 		task_id := worker_types.TaskID(task_number)
-		if !task.IsDone() && !taskPool.allow_failed_tasks {
+		if !task.IsDone() {
 			worker_logus.Log.Error("task failed", worker_logus.TaskID(task_id))
+			return errors.New(fmt.Sprintf("task failed, task_id=", task_id))
 		}
 		worker_logus.Log.Debug("task succeed", worker_logus.TaskID(task_id))
 	}
+	return nil
 }

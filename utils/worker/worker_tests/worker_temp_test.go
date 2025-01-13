@@ -49,8 +49,8 @@ func TestWorkerTemp(t *testing.T) {
 	}
 
 	worker.RunTasksInTempPool(
+		"test_worker_temp",
 		tasks,
-		worker.WithAllowFailedTasks(),
 		worker.WithDisableParallelism(false),
 	)
 

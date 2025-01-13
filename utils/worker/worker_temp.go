@@ -17,6 +17,7 @@ type ITask interface {
 	RunTask(worker_id worker_types.WorkerID) error
 	IsDone() bool
 	setError(error)
+	GetError() error
 	GetStatusCode() worker_types.TaskStatusCode
 	SetAsDone()
 }
@@ -32,6 +33,7 @@ func (t *Task) IsDone() bool               { return t.done }
 
 func (t *Task) SetAsDone()         { t.done = true }
 func (t *Task) setError(err error) { t.err = err }
+func (t *Task) GetError() error    { return t.err }
 
 func (t *Task) GetStatusCode() worker_types.TaskStatusCode {
 	if t.err == nil && t.done {
@@ -108,7 +110,9 @@ func (j *TaskPool) launchWorker(worker_id worker_types.WorkerID, tasks <-chan IT
 
 				if r := recover(); r != nil {
 					logus.Log.Error("Recovered in doRunf", typelog.Any("panic", r))
-					task_err <- errors.New(fmt.Sprintln("task paniced", r))
+					err := errors.New(fmt.Sprintln("task paniced", r))
+					task.setError(err)
+					task_err <- err
 				}
 			}()
 			task_err <- task.RunTask(worker_id)
@@ -178,6 +182,7 @@ func RunTasksInTempPool(name string, tasks []ITask, opts ...TaskPoolOption) erro
 	if taskPool.disable_parallelism {
 		for pseudo_worker_id, task := range tasks {
 			task.RunTask(worker_types.WorkerID(pseudo_worker_id))
+			task.SetAsDone()
 			finished_tasks = append(finished_tasks, task)
 		}
 	} else {
@@ -192,8 +197,11 @@ func RunTasksInTempPool(name string, tasks []ITask, opts ...TaskPoolOption) erro
 	for task_number, task := range tasks {
 		task_id := worker_types.TaskID(task_number)
 		if !task.IsDone() {
-			worker_logus.Log.Error("task failed", worker_logus.TaskID(task_id))
-			return errors.New(fmt.Sprintf("task failed, task_id=", task_id))
+			worker_logus.Log.Error("task failed", worker_logus.TaskID(task_id), typelog.OptError(task.GetError()))
+			err := task.GetError()
+			if err != nil {
+				return errors.New(fmt.Sprintln("task failed, task_id=", task_id, "error=", err.Error()))
+			}
 		}
 		worker_logus.Log.Debug("task succeed", worker_logus.TaskID(task_id))
 	}

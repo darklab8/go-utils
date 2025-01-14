@@ -64,6 +64,12 @@ type TaskPool struct {
 
 type TaskPoolOption func(r *TaskPool)
 
+func WithName(name string) TaskPoolOption {
+	return func(c *TaskPool) {
+		c.name = name
+	}
+}
+
 func WithTaskObServer(task_observer func(task ITask)) TaskPoolOption {
 	return func(c *TaskPool) {
 		c.task_observers = append(c.task_observers, task_observer)
@@ -82,9 +88,8 @@ func WithDisableParallelism(disable_parallelism worker_types.DebugDisableParalle
 	return func(c *TaskPool) { c.disable_parallelism = disable_parallelism }
 }
 
-func NewTaskPool(name string, opts ...TaskPoolOption) *TaskPool {
+func NewTaskPool(opts ...TaskPoolOption) *TaskPool {
 	j := &TaskPool{
-		name:        name,
 		numWorkers:  3,
 		taskTimeout: 60 * 30,
 	}
@@ -161,7 +166,7 @@ func runTasksinTemporalWorkers(tasks []ITask, j *TaskPool) {
 	close(tasks_channel)
 }
 
-func RunTasksInTempPool(name string, tasks []ITask, opts ...TaskPoolOption) error {
+func RunTasksInTempPool(tasks []ITask, opts ...TaskPoolOption) error {
 	numTasks := len(tasks)
 	result_channel := make(chan ITask, numTasks)
 
@@ -172,7 +177,7 @@ func RunTasksInTempPool(name string, tasks []ITask, opts ...TaskPoolOption) erro
 	}
 
 	total_options = append(total_options, opts...)
-	taskPool := NewTaskPool(name, total_options...)
+	taskPool := NewTaskPool(total_options...)
 	finished_tasks := []ITask{}
 
 	/*

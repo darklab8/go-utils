@@ -10,8 +10,8 @@ type TaskPoolPeristent struct {
 	task_channel chan ITask
 }
 
-func NewTaskPoolPersistent(name string, opts ...TaskPoolOption) *TaskPoolPeristent {
-	j := &TaskPoolPeristent{TaskPool: NewTaskPool(name, opts...)}
+func NewTaskPoolPersistent(opts ...TaskPoolOption) *TaskPoolPeristent {
+	j := &TaskPoolPeristent{TaskPool: NewTaskPool(opts...)}
 
 	j.task_channel = make(chan ITask)
 

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/darklab8/fl-darkstat/darkstat/settings"
+	"github.com/darklab8/go-utils/utils/enverant"
 	"github.com/darklab8/go-utils/utils/ptr"
 )
 
@@ -17,8 +17,9 @@ type Parser struct {
 }
 
 type ParserOpts struct {
-	ParentArgs    []string // needed for help info to see what was previous called
-	DefaultAction *string  // by default will be "help"
+	ParentArgs    []string             // needed for help info to see what was previous called
+	DefaultAction *string              // by default will be "help"
+	enverants     []*enverant.Enverant // for showing help info about available env vars
 }
 
 func NewConsoleParser(
@@ -73,7 +74,7 @@ func (p *Parser) PrintHelp() {
 
 	fmt.Println()
 	fmt.Println("possible environment variables:")
-	for _, enver := range settings.Enverants {
+	for _, enver := range p.enverants {
 		fmt.Println()
 		if enver.Description != "" {
 			fmt.Println(enver.Description)

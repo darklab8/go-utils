@@ -7,6 +7,7 @@ Manager for getting values from Environment variables
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -16,15 +17,70 @@ import (
 type Enverant struct {
 	file_envs        map[string]interface{}
 	validate_missing bool
+
+	Description        string
+	prefix             string
+	all_prefixed_keys  map[string]*EnvParamsData
+	used_prefixed_keys map[string]bool // useful for validation of finding not used keys
+}
+
+type EnvParamsData struct {
+	*ValueParams
+	PrefixedKey string
+	Value       string
+}
+
+func (e *Enverant) GetParams() []*EnvParamsData {
+	var infos []*EnvParamsData
+	for _, value := range e.all_prefixed_keys {
+		infos = append(infos, value)
+	}
+	sort.Slice(infos, func(i, j int) bool {
+		return infos[i].PrefixedKey < infos[j].PrefixedKey
+	})
+	return infos
+}
+
+func (e *Enverant) ValidetNoUnused() {
+
+	if e.prefix == "" {
+		fmt.Println("e.prefix is empty. Don't validate not used env vars if not using prefix")
+		os.Exit(1)
+	}
+
+	os.Environ()
+
+	env := os.Environ()
+
+	for _, v := range env {
+		// split the key and value
+		key := strings.Split(v, "=")[0]
+
+		if !strings.HasPrefix(key, e.prefix) {
+			continue
+		}
+
+		// exception as thing used in typelog
+		if key == e.prefix+"LOG_LEVEL" {
+			continue
+		}
+
+		if _, ok := e.used_prefixed_keys[key]; !ok {
+			fmt.Println("found darkstat not used env var. Change key to smth else, key=", key)
+			os.Exit(1)
+		}
+	}
 }
 
 type EnverantOption func(m *Enverant)
 
 func NewEnverant(opts ...EnverantOption) *Enverant {
 	e := &Enverant{
-		file_envs: map[string]interface{}{},
+		file_envs:          map[string]interface{}{},
+		all_prefixed_keys:  map[string]*EnvParamsData{},
+		used_prefixed_keys: map[string]bool{},
 	}
-	if path, ok := os.LookupEnv("ENVERANT_ENV_FILE"); ok {
+	if path, ok := e.LookupEnv("ENVERANT_ENV_FILE", &ValueParams{Description: "where to seek dev env file for inputing env vars through env file"}); ok {
 		e.file_envs = ReadJson(path)
 	}
 	for _, opt := range opts {
@@ -36,6 +92,18 @@ func NewEnverant(opts ...EnverantOption) *Enverant {
 func WithValidate(validate bool) EnverantOption {
 	return func(m *Enverant) {
 		m.validate_missing = validate
+	}
+}
+
+func WithDescription(Description string) EnverantOption {
+	return func(m *Enverant) {
+		m.Description = Description
+	}
+}
+
+func WithPrefix(prefix string) EnverantOption {
+	return func(m *Enverant) {
+		m.prefix = prefix
 	}
 }
 
@@ -55,25 +123,36 @@ func EnrichStr(value string) string {
 }
 
 type ValueParams struct {
-	default_ any
+	VarType     VarType
+	Default     any
+	Description string
 }
 type ValueOption func(m *ValueParams)
 
+/*
+WithDesc - is used to build help information
+*/
+func WithDesc(description string) ValueOption {
+	return func(m *ValueParams) {
+		m.Description = description
+	}
+}
+
 func OrStr(default_ string) ValueOption {
 	return func(m *ValueParams) {
-		m.default_ = default_
+		m.Default = default_
 	}
 }
 
 func OrInt(default_ int) ValueOption {
 	return func(m *ValueParams) {
-		m.default_ = default_
+		m.Default = default_
 	}
 }
 
 func OrBool(default_ bool) ValueOption {
 	return func(m *ValueParams) {
-		m.default_ = default_
+		m.Default = default_
 	}
 }
 
@@ -97,17 +176,19 @@ func (e *Enverant) GetPtrStr(key string, opts ...ValueOption) *string {
 }
 
 func (e *Enverant) GetString(key string, opts ...ValueOption) (string, bool) {
-	params := &ValueParams{}
+	params := &ValueParams{
+		VarType: VarStr,
+	}
 	for _, opt := range opts {
 		opt(params)
 	}
 
-	if value, ok := os.LookupEnv(key); ok {
+	if value, ok := e.LookupEnv(key, params); ok {
 		return EnrichStr(value), true
 	}
 
-	if params.default_ != nil {
-		return params.default_.(string), true
+	if params.Default != nil {
+		return params.Default.(string), true
 	}
 
 	if e.validate_missing {
@@ -136,18 +217,64 @@ func (e *Enverant) GetPtrBool(key string, opts ...ValueOption) *bool {
 	return nil
 }
 
+func (e *Enverant) LookupEnv(key string, params *ValueParams) (string, bool) {
+	info := &EnvParamsData{
+		ValueParams: params,
+		PrefixedKey: e.prefix + key,
+	}
+	e.all_prefixed_keys[key] = info
+
+	if e.prefix != "" {
+		if value, ok := os.LookupEnv(e.prefix + key); ok {
+			e.used_prefixed_keys[e.prefix+key] = true
+			info.Value = value
+			return value, ok
+		}
+	}
+
+	if value, ok := os.LookupEnv(key); ok {
+		info.Value = value
+		return value, ok
+	}
+
+	return "", false
+}
+
+type VarType int64
+
+const (
+	VarBool VarType = iota
+	VarInt
+	VarStr
+)
+
+func (v VarType) ToStr() string {
+	switch v {
+	case VarBool:
+		return "bool"
+	case VarInt:
+		return "int"
+	case VarStr:
+		return "str"
+
+	}
+	panic("undefined")
+}
+
 func (e *Enverant) GetBoolean(key string, opts ...ValueOption) (bool, bool) {
-	params := &ValueParams{}
+	params := &ValueParams{
+		VarType: VarBool,
+	}
 	for _, opt := range opts {
 		opt(params)
 	}
 
-	if value, ok := os.LookupEnv(key); ok {
+	if value, ok := e.LookupEnv(key, params); ok {
 		return value == "true", true
 	}
 
-	if params.default_ != nil {
-		return params.default_.(bool), true
+	if params.Default != nil {
+		return params.Default.(bool), true
 	}
 
 	if e.validate_missing {
@@ -177,12 +304,14 @@ func (e *Enverant) GetPtrInt(key string, opts ...ValueOption) *int {
 }
 
 func (e *Enverant) GetInteger(key string, opts ...ValueOption) (int, bool) {
-	params := &ValueParams{}
+	params := &ValueParams{
+		VarType: VarInt,
+	}
 	for _, opt := range opts {
 		opt(params)
 	}
 
-	if value, ok := os.LookupEnv(key); ok {
+	if value, ok := e.LookupEnv(key, params); ok {
 		int_value, err := strconv.Atoi(value)
 		if err != nil {
 			panic(fmt.Sprintln(err, "expected to be int, key=", key))
@@ -190,8 +319,8 @@ func (e *Enverant) GetInteger(key string, opts ...ValueOption) (int, bool) {
 		return int_value, true
 	}
 
-	if params.default_ != nil {
-		return params.default_.(int), true
+	if params.Default != nil {
+		return params.Default.(int), true
 	}
 
 	if e.validate_missing {

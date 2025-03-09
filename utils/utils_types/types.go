@@ -45,7 +45,7 @@ type GetFilesParams struct {
 
 func GetFiles(filesystem embed.FS, params GetFilesParams) []File {
 	if len(params.AllowedExtensions) == 0 {
-		params.AllowedExtensions = []string{"js", "css", "png", "jpeg"}
+		params.AllowedExtensions = []string{"js", "css", "png", "jpeg", "json"}
 	}
 	if params.RootFolder == "" {
 		params.RootFolder = "."

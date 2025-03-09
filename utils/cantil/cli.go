@@ -19,7 +19,7 @@ type Parser struct {
 type ParserOpts struct {
 	ParentArgs    []string             // needed for help info to see what was previous called
 	DefaultAction *string              // by default will be "help"
-	enverants     []*enverant.Enverant // for showing help info about available env vars
+	Enverants     []*enverant.Enverant // for showing help info about available env vars
 }
 
 func NewConsoleParser(
@@ -74,7 +74,7 @@ func (p *Parser) PrintHelp() {
 
 	fmt.Println()
 	fmt.Println("possible environment variables:")
-	for _, enver := range p.enverants {
+	for _, enver := range p.Enverants {
 		fmt.Println()
 		if enver.Description != "" {
 			fmt.Println(enver.Description)

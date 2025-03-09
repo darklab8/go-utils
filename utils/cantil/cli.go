@@ -92,6 +92,9 @@ func (p *Parser) PrintHelp() {
 	for _, command := range p.actions_by_nick {
 		fmt.Printf("  %s - %s\n", command.Nickname, command.Description)
 	}
+	if p.DefaultAction != nil {
+		fmt.Println("default command: ", *p.DefaultAction)
+	}
 
 	fmt.Println()
 	fmt.Println("your called args", os.Args[1:])

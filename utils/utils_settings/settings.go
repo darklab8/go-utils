@@ -7,6 +7,7 @@ import (
 type UtilsEnvs struct {
 	IsDevEnv             bool
 	AreTestsRegenerating bool
+	Environment          string
 	Enver                *enverant.Enverant
 }
 
@@ -22,6 +23,7 @@ func GetEnvs() UtilsEnvs {
 	Envs = UtilsEnvs{
 		IsDevEnv:             envs.GetBool("DEV_ENV", enverant.OrBool(false), enverant.WithDesc("if u wish running smth differently when running darkstat in IDE, that's your option")),
 		AreTestsRegenerating: envs.GetBool("TEST_REGENERATE", enverant.OrBool(false), enverant.WithDesc("if u wish to use current test run to regenerate unit tests, that's your option")),
+		Environment:          envs.GetStr("ENVIRONMENT", enverant.OrStr("undefined"), enverant.WithDesc("Environment like staging or production or anything else where app runs. Adds metric label")),
 		Enver:                envs,
 	}
 	return Envs

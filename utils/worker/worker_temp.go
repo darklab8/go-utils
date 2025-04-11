@@ -3,6 +3,7 @@ package worker
 import (
 	"errors"
 	"fmt"
+	"runtime/debug"
 	"time"
 
 	"github.com/darklab8/go-typelog/examples/logus"
@@ -114,7 +115,7 @@ func (j *TaskPool) launchWorker(worker_id worker_types.WorkerID, tasks <-chan IT
 				loggus.Info("initialized worker pool with tasks allowed to fail=")
 
 				if r := recover(); r != nil {
-					logus.Log.Error("Recovered in doRunf", typelog.Any("panic", r))
+					logus.Log.Error("Recovered in doRunf", typelog.Any("panic", r), typelog.Any("traceback", string(debug.Stack())))
 					err := errors.New(fmt.Sprintln("task paniced", r))
 					task.setError(err)
 					task_err <- err

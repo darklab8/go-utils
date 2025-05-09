@@ -16,3 +16,14 @@ func InitRegexExpression(regex **regexp.Regexp, expression utils_types.RegExp) {
 		panic(fmt.Sprintln(err, "failed to init regex=", expression))
 	}
 }
+
+func InitRegex(expression utils_types.RegExp) *regexp.Regexp {
+	var err error
+
+	regex, err := regexp.Compile(string(expression))
+
+	if err != nil {
+		panic(fmt.Sprintln(err, "failed to init regex=", expression))
+	}
+	return regex
+}

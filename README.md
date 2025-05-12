@@ -5,11 +5,7 @@
 
 # Contains
 
-worker:
-
-- in memory message queue workers
-
-utils:
-
-- Every other little thing not worthy enough to be in dedicated package/folder
-
+- worker. in memory message queue workers
+- utils. Every other little thing not worthy enough to be in dedicated package/folder
+- typelog. Static typed logging library. See its [README](./typelog/README.md)
+- otlp. opentelemetry related configurations

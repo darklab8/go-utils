@@ -105,12 +105,17 @@ func newTracerProvider() (*trace.TracerProvider, error) {
 	}
 	_ = traceExporter
 
-	tracerProvider := trace.NewTracerProvider(
+	var opts []trace.TracerProviderOption = []trace.TracerProviderOption{
 		trace.WithResource(GetResource()),
-		trace.WithBatcher(traceExporter,
+	}
+
+	if Env.HttpOn {
+		opts = append(opts, trace.WithBatcher(traceExporter,
 			// Default is 5s. Set to 1s for demonstrative purposes.
-			trace.WithBatchTimeout(time.Second)),
-	)
+			trace.WithBatchTimeout(time.Second)))
+	}
+
+	tracerProvider := trace.NewTracerProvider(opts...)
 	return tracerProvider, nil
 }
 
@@ -120,13 +125,17 @@ func newMeterProvider() (*metric.MeterProvider, error) {
 		return nil, err2
 	}
 
-	meterProvider := metric.NewMeterProvider(
+	var opts []metric.Option = []metric.Option{
 		metric.WithResource(GetResource()),
-
-		metric.WithReader(metric.NewPeriodicReader(metricExporter,
+	}
+	if Env.HttpOn {
+		opts = append(opts, metric.WithReader(metric.NewPeriodicReader(metricExporter,
 			// Default is 1m. Set to 3s for demonstrative purposes.
 			metric.WithInterval(3*time.Second))),
-	)
+		)
+	}
+
+	meterProvider := metric.NewMeterProvider(opts...)
 	return meterProvider, nil
 }
 
@@ -140,12 +149,16 @@ func newLoggerProvider() (*log.LoggerProvider, error) {
 	if err2 != nil {
 		return nil, err2
 	}
-	_ = httplogExporter
-
-	loggerProvider := log.NewLoggerProvider(
+	var opts []log.LoggerProviderOption = []log.LoggerProviderOption{
 		log.WithResource(GetResource()),
-		log.WithProcessor(log.NewBatchProcessor(httplogExporter)),
-		// log.WithProcessor(log.NewBatchProcessor(logExporter)),
-	)
+	}
+	if Env.HttpOn {
+		opts = append(opts, log.WithProcessor(log.NewBatchProcessor(httplogExporter)))
+	}
+
+	// Would u like implement console logger some day?
+	// log.WithProcessor(log.NewBatchProcessor(logExporter)),
+
+	loggerProvider := log.NewLoggerProvider(opts...)
 	return loggerProvider, nil
 }

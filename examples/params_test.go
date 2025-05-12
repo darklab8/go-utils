@@ -6,10 +6,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/darklab8/go-typelog/examples/logus"
-	"github.com/darklab8/go-typelog/examples/typedlogs"
-	"github.com/darklab8/go-typelog/examples/types"
-	"github.com/darklab8/go-typelog/typelog"
+	"github.com/darklab8/go-utils/examples/logus"
+	"github.com/darklab8/go-utils/examples/typedlogs"
+	"github.com/darklab8/go-utils/examples/types"
+	"github.com/darklab8/go-utils/typelog"
 )
 
 func TestTypedLogs(t *testing.T) {

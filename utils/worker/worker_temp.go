@@ -6,8 +6,8 @@ import (
 	"runtime/debug"
 	"time"
 
-	"github.com/darklab8/go-typelog/examples/logus"
-	"github.com/darklab8/go-typelog/typelog"
+	"github.com/darklab8/go-utils/examples/logus"
+	"github.com/darklab8/go-utils/typelog"
 	"github.com/darklab8/go-utils/utils/worker/worker_logus"
 	"github.com/darklab8/go-utils/utils/worker/worker_types"
 )

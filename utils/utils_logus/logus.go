@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log/slog"
 
-	"github.com/darklab8/go-typelog/typelog"
+	"github.com/darklab8/go-utils/typelog"
 
 	_ "github.com/darklab8/go-utils/utils/utils_settings"
 	"github.com/darklab8/go-utils/utils/utils_types"

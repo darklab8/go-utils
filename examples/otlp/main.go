@@ -15,8 +15,8 @@ import (
 
 	"math/rand"
 
-	"github.com/darklab8/go-typelog/otlp"
-	"github.com/darklab8/go-typelog/typelog"
+	"github.com/darklab8/go-utils/otlp"
+	"github.com/darklab8/go-utils/typelog"
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"

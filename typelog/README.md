@@ -25,13 +25,13 @@ Static typing approach brings here consistent way to define key values to final 
 
 ## How to use
 
-install with `go get github.com/darklab8/go-typelog`
+install with `go get github.com/darklab8/go-utils`
 
 examples/logger/main.go
 ```go
 package logger
 
-import "github.com/darklab8/go-typelog/typelog"
+import "github.com/darklab8/go-utils/typelog"
 
 var Log *typelog.Logger = typelog.NewLogger("typelog")
 ```
@@ -45,8 +45,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/darklab8/go-typelog/examples/logger"
-	"github.com/darklab8/go-typelog/typelog"
+	"github.com/darklab8/go-utils/examples/logger"
+	"github.com/darklab8/go-utils/typelog"
 )
 
 func TestUsingInitialized(t *testing.T) {

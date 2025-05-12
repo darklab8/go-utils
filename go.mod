@@ -3,7 +3,6 @@ module github.com/darklab8/go-utils
 go 1.23.0
 
 require (
-	github.com/darklab8/go-typelog v0.8.0
 	github.com/stretchr/testify v1.10.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.10.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0

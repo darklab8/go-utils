@@ -3,8 +3,8 @@ package typedlogs
 import (
 	"log/slog"
 
-	"github.com/darklab8/go-typelog/examples/types"
-	"github.com/darklab8/go-typelog/typelog"
+	"github.com/darklab8/go-utils/examples/types"
+	"github.com/darklab8/go-utils/typelog"
 )
 
 func TaskID(value types.TaskID) typelog.LogType { return typelog.String("task_id", string(value)) }

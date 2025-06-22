@@ -131,7 +131,7 @@ func newMeterProvider() (*metric.MeterProvider, error) {
 	if Env.HttpOn {
 		opts = append(opts, metric.WithReader(metric.NewPeriodicReader(metricExporter,
 			// Default is 1m. Set to 3s for demonstrative purposes.
-			metric.WithInterval(3*time.Second))),
+			metric.WithInterval(time.Duration(Env.MetricsInterval)*time.Second))),
 		)
 	}
 

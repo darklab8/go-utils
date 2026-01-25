@@ -58,12 +58,23 @@ func (p *Parser) Run(args []string) error {
 	if len(args) >= 1 {
 		action_nickname = args[0]
 	}
+
 	fmt.Println("act:", action_nickname)
 
 	info := ActionInfo{CmdArgs: args}
 
 	if action, ok := p.actions_by_nick[action_nickname]; ok {
 		return action.Func(info)
+	}
+
+	is_help := false
+	for _, arg := range args {
+		if arg == "--help" {
+			is_help = true
+		}
+	}
+	if is_help {
+		return p.actions_by_nick["help"].Func(info)
 	}
 
 	return p.actions_by_nick[*p.DefaultAction].Func(info)

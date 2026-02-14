@@ -5,8 +5,10 @@ Manager for getting values from Environment variables
 */
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"sort"
 	"strconv"
 	"strings"
@@ -184,7 +186,38 @@ func (e *Enverant) GetString(key string, opts ...ValueOption) (string, bool) {
 	}
 
 	if value, ok := e.LookupEnv(key, params); ok {
-		return EnrichStr(value), true
+		found_str := EnrichStr(value)
+
+		if strings.Contains(found_str, "pass[") {
+			_, err_to_find_pass := exec.LookPath("pass")
+			if err_to_find_pass != nil {
+				fmt.Println("pass not found in PATH")
+				return "", false
+			}
+
+			keys := strings.Split(found_str, " ")
+			json_key := strings.ReplaceAll(keys[0], "pass[", "")
+			json_key = strings.ReplaceAll(json_key, "]", "")
+
+			pass_key := keys[1]
+
+			cmd := exec.Command("pass", pass_key)
+
+			output, err := cmd.CombinedOutput()
+			if err != nil {
+				panic(fmt.Sprintln("failed to get pass output, err=", err.Error()))
+			}
+
+			var result map[string]string
+			err = json.Unmarshal(output, &result)
+			if err != nil {
+				panic(err)
+			}
+
+			found_str = result[json_key]
+		}
+
+		return found_str, true
 	}
 
 	if params.Default != nil {

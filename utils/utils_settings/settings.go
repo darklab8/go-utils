@@ -1,8 +1,8 @@
 package utils_settings
 
 import (
-	"fmt"
-
+	"github.com/darklab8/go-utils/examples/logus"
+	"github.com/darklab8/go-utils/typelog"
 	"github.com/darklab8/go-utils/utils/enverant"
 )
 
@@ -33,6 +33,6 @@ func GetEnvs() UtilsEnvs {
 		Enver:                envs,
 	}
 
-	fmt.Println("initialized useragent=", Envs.UserAgent)
+	logus.Log.Debug("initialized useragent", typelog.Any("useragent", Envs.UserAgent))
 	return Envs
 }

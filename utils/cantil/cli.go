@@ -4,6 +4,7 @@ package cantil
  */
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -106,6 +107,9 @@ func (p *Parser) PrintHelp() {
 	if p.DefaultAction != nil {
 		fmt.Println("default command: ", *p.DefaultAction)
 	}
+
+	fmt.Println("Possible cli args:")
+	flag.PrintDefaults()
 
 	fmt.Println()
 	fmt.Println("your called args", os.Args[1:])

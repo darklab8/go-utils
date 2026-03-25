@@ -60,7 +60,7 @@ func (p *Parser) Run(args []string) error {
 		action_nickname = args[0]
 	}
 
-	fmt.Println("act:", action_nickname)
+	fmt.Println("cantil cmd invoked:", action_nickname)
 
 	info := ActionInfo{CmdArgs: args}
 
@@ -100,6 +100,11 @@ func (p *Parser) PrintHelp() {
 	}
 
 	fmt.Println()
+	fmt.Println("Possible cli args ( by https://pkg.go.dev/flag ):")
+	fmt.Println("Input cli args BEFORE final non flag command")
+	flag.PrintDefaults()
+
+	fmt.Println()
 	fmt.Println("Possible commands:")
 	for _, command := range p.actions_by_nick {
 		fmt.Printf("  %s - %s\n", command.Nickname, command.Description)
@@ -107,9 +112,6 @@ func (p *Parser) PrintHelp() {
 	if p.DefaultAction != nil {
 		fmt.Println("default command: ", *p.DefaultAction)
 	}
-
-	fmt.Println("Possible cli args:")
-	flag.PrintDefaults()
 
 	fmt.Println()
 	fmt.Println("your called args", os.Args[1:])

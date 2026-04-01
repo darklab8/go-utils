@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/fs"
 	"log"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -22,6 +23,11 @@ func (f FilePath) Dir() FilePath { return FilePath(filepath.Dir(string(f))) }
 func (f FilePath) Join(paths ...string) FilePath {
 	paths = append([]string{string(f)}, paths...)
 	return FilePath(filepath.Join(paths...))
+}
+
+func (f FilePath) JoinEmbed(paths ...string) FilePath {
+	paths = append([]string{string(f)}, paths...)
+	return FilePath(path.Join(paths...))
 }
 
 type RegExp string
@@ -61,11 +67,9 @@ func GetFiles(filesystem embed.FS, params GetFilesParams) []File {
 			if params.IsNotRecursive {
 				continue
 			}
-			params.relFolder = params.relFolder.Join(f.Name())
-			params.RootFolder = params.RootFolder.Join(f.Name())
-			result = append(result,
-				GetFiles(filesystem, params)...,
-			)
+			params.relFolder = params.relFolder.JoinEmbed(f.Name())
+			params.RootFolder = params.RootFolder.JoinEmbed(f.Name())
+			result = append(result, GetFiles(filesystem, params)...)
 		} else {
 			splitted := strings.Split(f.Name(), ".")
 			var extension string
@@ -73,29 +77,27 @@ func GetFiles(filesystem embed.FS, params GetFilesParams) []File {
 				extension = splitted[len(splitted)-1]
 			}
 
-			path := params.RootFolder.Join(f.Name())
-			requested := strings.ReplaceAll(path.ToString(), "\\", "/") // fix for windows
+			requested := params.RootFolder.JoinEmbed(f.Name()).ToString()
 			content, err := filesystem.ReadFile(requested)
 			if err != nil {
 				PrintFilesForDebug(filesystem)
-				fmt.Println(err.Error(), "failed to read file from embeded fs of",
-					"path=", path,
-					"requested", requested,
+				fmt.Println(err.Error(), "failed to read file from embedded fs",
+					"requested=", requested,
 				)
 			}
 
-			is_allowed_extension := false
-			for _, allowed_extension := range params.AllowedExtensions {
-				if allowed_extension == extension {
-					is_allowed_extension = true
+			isAllowedExtension := false
+			for _, allowed := range params.AllowedExtensions {
+				if allowed == extension {
+					isAllowedExtension = true
 				}
 			}
-			if !is_allowed_extension {
+			if !isAllowedExtension {
 				continue
 			}
 
 			result = append(result, File{
-				Relpath:   params.relFolder.Join(f.Name()),
+				Relpath:   params.relFolder.JoinEmbed(f.Name()),
 				Name:      f.Name(),
 				Extension: extension,
 				Content:   string(content),

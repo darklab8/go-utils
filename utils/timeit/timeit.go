@@ -9,9 +9,10 @@ import (
 )
 
 type Timer struct {
-	msg         string
-	ops         []typelog.LogType
-	timeStarted time.Time
+	msg          string
+	ops          []typelog.LogType
+	timeStarted  time.Time
+	measuredTime time.Duration
 }
 
 type TimeOption func(m *Timer)
@@ -44,7 +45,12 @@ func WithLogs(log_types ...typelog.LogType) TimeOption {
 }
 
 func (m *Timer) Close() {
+	m.measuredTime = time.Since(m.timeStarted)
 	utils_logus.Log.Debug(fmt.Sprintf("time_measure %v | %s", time.Since(m.timeStarted), m.msg), m.ops...)
+}
+
+func (m *Timer) Duration() time.Duration {
+	return m.measuredTime
 }
 
 func NewTimerF(callback func(), opts ...TimeOption) *Timer {

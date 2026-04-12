@@ -67,9 +67,10 @@ func GetFiles(filesystem embed.FS, params GetFilesParams) []File {
 			if params.IsNotRecursive {
 				continue
 			}
-			params.relFolder = params.relFolder.JoinEmbed(f.Name())
-			params.RootFolder = params.RootFolder.JoinEmbed(f.Name())
-			result = append(result, GetFiles(filesystem, params)...)
+			dir_params := params
+			dir_params.relFolder = params.relFolder.JoinEmbed(f.Name())
+			dir_params.RootFolder = params.RootFolder.JoinEmbed(f.Name())
+			result = append(result, GetFiles(filesystem, dir_params)...)
 		} else {
 			splitted := strings.Split(f.Name(), ".")
 			var extension string

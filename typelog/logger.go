@@ -133,8 +133,8 @@ func (l *Logger) Initialized() *Logger {
 }
 
 func (l *Logger) WithFields(opts ...LogType) *Logger {
-	l.attrs = append(l.attrs, opts...)
 	var newLogger Logger = *l
+	newLogger.attrs = append(newLogger.attrs, opts...)
 	newLogger.Initialized()
 	newLogger.logger = newLogger.logger.With(newSlogArgs(newLogger.attrs...)...)
 	return &newLogger

@@ -14,6 +14,7 @@ import (
 
 type Logger struct {
 	logger             *slog.Logger
+	attrs              []LogType
 	name               string
 	scope              string
 	enable_file_shown  bool
@@ -132,9 +133,10 @@ func (l *Logger) Initialized() *Logger {
 }
 
 func (l *Logger) WithFields(opts ...LogType) *Logger {
+	l.attrs = append(l.attrs, opts...)
 	var newLogger Logger = *l
 	newLogger.Initialized()
-	newLogger.logger = newLogger.logger.With(newSlogArgs(opts...)...)
+	newLogger.logger = newLogger.logger.With(newSlogArgs(newLogger.attrs...)...)
 	return &newLogger
 }
 

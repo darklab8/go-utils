@@ -146,11 +146,11 @@ func (l *Logger) CheckDebug(err error, msg string, opts ...LogType) bool {
 	return true
 }
 
-func (l *Logger) CheckDebugCtx(ctx context.Context, err error, msg string, opts ...LogType) {
-	l.CheckDebug(err, msg, CtxOpts(ctx, opts...)...)
+func (l *Logger) CheckDebugCtx(ctx context.Context, err error, msg string, opts ...LogType) bool {
+	return l.CheckDebug(err, msg, CtxOpts(ctx, opts...)...)
 }
-func (l *Logger) CheckDebugln(err error, a ...any) {
-	l.CheckDebug(err, fmt.Sprintln(a...))
+func (l *Logger) CheckDebugln(err error, a ...any) bool {
+	return l.CheckDebug(err, fmt.Sprintln(a...))
 }
 
 func (l *Logger) CheckWarn(err error, msg string, opts ...LogType) bool {
@@ -166,12 +166,12 @@ func (l *Logger) CheckWarn(err error, msg string, opts ...LogType) bool {
 	return true
 }
 
-func (l *Logger) CheckWarnCtx(ctx context.Context, err error, msg string, opts ...LogType) {
-	l.CheckWarn(err, msg, CtxOpts(ctx, opts...)...)
+func (l *Logger) CheckWarnCtx(ctx context.Context, err error, msg string, opts ...LogType) bool {
+	return l.CheckWarn(err, msg, CtxOpts(ctx, opts...)...)
 }
 
-func (l *Logger) CheckWarnln(err error, a ...any) {
-	l.CheckWarn(err, fmt.Sprintln(a...))
+func (l *Logger) CheckWarnln(err error, a ...any) bool {
+	return l.CheckWarn(err, fmt.Sprintln(a...))
 }
 
 func (l *Logger) CheckError(err error, msg string, opts ...LogType) bool {
@@ -187,12 +187,12 @@ func (l *Logger) CheckError(err error, msg string, opts ...LogType) bool {
 	return true
 }
 
-func (l *Logger) CheckErrorCtx(ctx context.Context, err error, msg string, opts ...LogType) {
-	l.CheckError(err, msg, CtxOpts(ctx, opts...)...)
+func (l *Logger) CheckErrorCtx(ctx context.Context, err error, msg string, opts ...LogType) bool {
+	return l.CheckError(err, msg, CtxOpts(ctx, opts...)...)
 }
 
-func (l *Logger) CheckErrorln(err error, a ...any) {
-	l.CheckError(err, fmt.Sprintln(a...))
+func (l *Logger) CheckErrorln(err error, a ...any) bool {
+	return l.CheckError(err, fmt.Sprintln(a...))
 }
 
 // CheckFatal has shorter error output in comparison to CheckPanic

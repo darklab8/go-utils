@@ -24,6 +24,10 @@ func (l *Logger) DebugCtx(ctx context.Context, msg string, opts ...LogType) {
 	l.Debug(msg, CtxOpts(ctx, opts...)...)
 }
 
+func (l *Logger) Debugln(a ...any) {
+	l.Debug(fmt.Sprintln(a...))
+}
+
 func (l *Logger) Info(msg string, opts ...LogType) {
 	if IsMsgEnabled(l.level_log, LEVEL_INFO) {
 		if l.enable_scope_shown {
@@ -35,6 +39,10 @@ func (l *Logger) Info(msg string, opts ...LogType) {
 		}
 		l.logger.Info(msg, args...)
 	}
+}
+
+func (l *Logger) Infoln(a ...any) {
+	l.Info(fmt.Sprintln(a...))
 }
 
 func (l *Logger) InfoCtx(ctx context.Context, msg string, opts ...LogType) {
@@ -59,6 +67,10 @@ func (l *Logger) WarnCtx(ctx context.Context, msg string, opts ...LogType) {
 	l.Warn(msg, CtxOpts(ctx, opts...)...)
 }
 
+func (l *Logger) Warnln(a ...any) {
+	l.Warn(fmt.Sprintln(a...))
+}
+
 // Error is bad but program can recover from it
 func (l *Logger) Error(msg string, opts ...LogType) {
 	if IsMsgEnabled(l.level_log, LEVEL_ERROR) {
@@ -72,6 +84,10 @@ func (l *Logger) Error(msg string, opts ...LogType) {
 		l.logger.Error(msg, args...)
 	}
 
+}
+
+func (l *Logger) Errorln(a ...any) {
+	l.Error(fmt.Sprintln(a...))
 }
 
 func (l *Logger) ErrorCtx(ctx context.Context, msg string, opts ...LogType) {
@@ -95,6 +111,9 @@ func (l *Logger) Fatal(msg string, opts ...LogType) {
 func (l *Logger) FatalCtx(ctx context.Context, msg string, opts ...LogType) {
 	l.Fatal(msg, CtxOpts(ctx, opts...)...)
 }
+func (l *Logger) Fatalln(a ...any) {
+	l.Fatal(fmt.Sprintln(a...))
+}
 
 func (l *Logger) Panic(msg string, opts ...LogType) {
 	if l.enable_scope_shown {
@@ -111,7 +130,9 @@ func (l *Logger) Panic(msg string, opts ...LogType) {
 func (l *Logger) PanicCtx(ctx context.Context, msg string, opts ...LogType) {
 	l.Panic(msg, CtxOpts(ctx, opts...)...)
 }
-
+func (l *Logger) Panicln(a ...any) {
+	l.Panic(fmt.Sprintln(a...))
+}
 func (l *Logger) CheckDebug(err error, msg string, opts ...LogType) bool {
 	if err == nil {
 		return false
@@ -127,6 +148,9 @@ func (l *Logger) CheckDebug(err error, msg string, opts ...LogType) bool {
 
 func (l *Logger) CheckDebugCtx(ctx context.Context, err error, msg string, opts ...LogType) {
 	l.CheckDebug(err, msg, CtxOpts(ctx, opts...)...)
+}
+func (l *Logger) CheckDebugln(err error, a ...any) {
+	l.CheckDebug(err, fmt.Sprintln(a...))
 }
 
 func (l *Logger) CheckWarn(err error, msg string, opts ...LogType) bool {
@@ -146,6 +170,10 @@ func (l *Logger) CheckWarnCtx(ctx context.Context, err error, msg string, opts .
 	l.CheckWarn(err, msg, CtxOpts(ctx, opts...)...)
 }
 
+func (l *Logger) CheckWarnln(err error, a ...any) {
+	l.CheckWarn(err, fmt.Sprintln(a...))
+}
+
 func (l *Logger) CheckError(err error, msg string, opts ...LogType) bool {
 	if err == nil {
 		return false
@@ -163,6 +191,10 @@ func (l *Logger) CheckErrorCtx(ctx context.Context, err error, msg string, opts 
 	l.CheckError(err, msg, CtxOpts(ctx, opts...)...)
 }
 
+func (l *Logger) CheckErrorln(err error, a ...any) {
+	l.CheckError(err, fmt.Sprintln(a...))
+}
+
 // CheckFatal has shorter error output in comparison to CheckPanic
 func (l *Logger) CheckFatal(err error, msg string, opts ...LogType) {
 	if err == nil {
@@ -176,6 +208,10 @@ func (l *Logger) CheckFatal(err error, msg string, opts ...LogType) {
 
 func (l *Logger) CheckFatalCtx(ctx context.Context, err error, msg string, opts ...LogType) {
 	l.CheckFatal(err, msg, CtxOpts(ctx, opts...)...)
+}
+
+func (l *Logger) CheckFatalln(err error, a ...any) {
+	l.CheckFatal(err, fmt.Sprintln(a...))
 }
 
 func (l *Logger) CheckPanic(err error, msg string, opts ...LogType) {
@@ -194,4 +230,7 @@ func (l *Logger) CheckPanic(err error, msg string, opts ...LogType) {
 
 func (l *Logger) CheckPanicCtx(ctx context.Context, err error, msg string, opts ...LogType) {
 	l.CheckPanic(err, msg, CtxOpts(ctx, opts...)...)
+}
+func (l *Logger) CheckPanicln(err error, a ...any) {
+	l.CheckPanic(err, fmt.Sprintln(a...))
 }

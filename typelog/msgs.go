@@ -242,7 +242,7 @@ func (l *Logger) CheckPanicCtx(ctx context.Context, err error, msg string, opts 
 		slog.String("err_type", fmt.Sprintf("%T", err)),
 	)
 	opts = append(opts, OptError(err))
-	l.Error(msg, opts...)
+	l.ErrorCtx(WithCtxCallerSkip(ctx, 4), msg, opts...)
 	panic_logger.Error(msg, args...)
 	panic(panic_str.String())
 }

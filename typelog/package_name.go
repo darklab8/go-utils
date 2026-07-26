@@ -14,14 +14,13 @@ All of this to write file + line of code.
 
 const TP_SKIP = "typelog_skip"
 
-var (
-	CtxSkip context.Context = context.Background()
-)
-
-func (l *Logger) GetFile() string {
+func (l *Logger) GetFileCtx(ctx context.Context) string {
 	ctx_skip := 3
-	if ctx_skip := CtxSkip.Value(TP_SKIP); ctx_skip != nil {
-		ctx_skip = ctx_skip.(int)
+	if ctx_value := ctx.Value(TP_SKIP); ctx_value != nil {
+		value, ok := ctx_value.(int)
+		if ok {
+			ctx_skip = value
+		}
 	}
 	return getFileCaller(ctx_skip)
 }
@@ -81,13 +80,10 @@ func parsePackageName(funcName string) string {
 	return funcName[:lastSlash+dot]
 }
 
-func SetCallerSkip(skip int) {
-	if extra_skip := CtxSkip.Value(TP_SKIP); extra_skip != nil {
-		return
+func WithCtxCallerSkip(ctx context.Context, skip int) context.Context {
+	if extra_skip := ctx.Value(TP_SKIP); extra_skip != nil {
+		return ctx
 	}
-	CtxSkip = context.WithValue(context.Background(), TP_SKIP, skip)
-}
 
-func UnsetCallerSkip() {
-	CtxSkip = context.Background()
+	return context.WithValue(ctx, TP_SKIP, skip)
 }

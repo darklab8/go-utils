@@ -8,29 +8,31 @@ import (
 	"strconv"
 )
 
-func (l *Logger) Debug(msg string, opts ...LogType) {
+func (l *Logger) DebugCtx(ctx context.Context, msg string, opts ...LogType) {
+	opts = CtxOpts(ctx, opts...)
 	if IsMsgEnabled(l.level_log, LEVEL_DEBUG) {
 		if l.enable_scope_shown {
 			opts = append(opts, String("scope", l.scope))
 		}
 		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_shown {
-			args = append(args, logGroupFiles())
+			args = append(args, logGroupFiles(ctx))
 		}
 		l.logger.Debug(msg, args...)
 	}
 }
 
-func (l *Logger) DebugCtx(ctx context.Context, msg string, opts ...LogType) {
-	l.Debug(msg, CtxOpts(ctx, opts...)...)
+func (l *Logger) Debug(msg string, opts ...LogType) {
+	l.DebugCtx(context.Background(), msg, opts...)
 }
 
 func (l *Logger) Debugln(a ...any) {
-	l.Debug(fmt.Sprintln(a...))
+	l.DebugCtx(context.Background(), fmt.Sprintln(a...))
 }
 
-func (l *Logger) Info(msg string, opts ...LogType) {
-	MetricMsgsTotal.WithLabelValues("info", l.GetFile(), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_INFO))).Inc()
+func (l *Logger) InfoCtx(ctx context.Context, msg string, opts ...LogType) {
+	opts = CtxOpts(ctx, opts...)
+	MetricMsgsTotal.WithLabelValues("info", l.GetFileCtx(ctx), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_INFO))).Inc()
 
 	if IsMsgEnabled(l.level_log, LEVEL_INFO) {
 		if l.enable_scope_shown {
@@ -38,27 +40,29 @@ func (l *Logger) Info(msg string, opts ...LogType) {
 		}
 		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_shown {
-			args = append(args, logGroupFiles())
+			args = append(args, logGroupFiles(ctx))
 		}
 		l.logger.Info(msg, args...)
 	}
 }
 
-func (l *Logger) Infoln(a ...any) {
-	SetCallerSkip(4)
-	l.Info(fmt.Sprintln(a...))
-	UnsetCallerSkip()
+func (l *Logger) Info(msg string, opts ...LogType) {
+	l.InfoCtx(WithCtxCallerSkip(context.Background(), 4), msg, opts...)
 }
 
-func (l *Logger) InfoCtx(ctx context.Context, msg string, opts ...LogType) {
-	SetCallerSkip(4)
-	l.Info(msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
+func (l *Logger) Infoln(a ...any) {
+	l.InfoCtx(WithCtxCallerSkip(context.Background(), 4), fmt.Sprintln(a...))
 }
 
 // Warn is for just potentially bad behavior to be aware of
 func (l *Logger) Warn(msg string, opts ...LogType) {
-	MetricMsgsTotal.WithLabelValues("warn", l.GetFile(), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_WARN))).Inc()
+	l.WarnCtx(WithCtxCallerSkip(context.Background(), 4), msg, opts...)
+
+}
+
+func (l *Logger) WarnCtx(ctx context.Context, msg string, opts ...LogType) {
+	opts = CtxOpts(ctx, opts...)
+	MetricMsgsTotal.WithLabelValues("warn", l.GetFileCtx(ctx), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_WARN))).Inc()
 
 	if IsMsgEnabled(l.level_log, LEVEL_WARN) {
 		if l.enable_scope_shown {
@@ -66,27 +70,28 @@ func (l *Logger) Warn(msg string, opts ...LogType) {
 		}
 		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_shown {
-			args = append(args, logGroupFiles())
+			args = append(args, logGroupFiles(ctx))
 		}
 		l.logger.Warn(msg, args...)
 	}
 }
 
-func (l *Logger) WarnCtx(ctx context.Context, msg string, opts ...LogType) {
-	SetCallerSkip(4)
-	l.Warn(msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
-}
-
 func (l *Logger) Warnln(a ...any) {
-	SetCallerSkip(4)
-	l.Warn(fmt.Sprintln(a...))
-	UnsetCallerSkip()
+	l.WarnCtx(WithCtxCallerSkip(context.Background(), 4), fmt.Sprintln(a...))
 }
 
 // Error is bad but program can recover from it
 func (l *Logger) Error(msg string, opts ...LogType) {
-	MetricMsgsTotal.WithLabelValues("error", l.GetFile(), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_ERROR))).Inc()
+	l.ErrorCtx(WithCtxCallerSkip(context.Background(), 4), msg, opts...)
+}
+
+func (l *Logger) Errorln(a ...any) {
+	l.ErrorCtx(WithCtxCallerSkip(context.Background(), 4), fmt.Sprintln(a...))
+}
+
+func (l *Logger) ErrorCtx(ctx context.Context, msg string, opts ...LogType) {
+	opts = CtxOpts(ctx, opts...)
+	MetricMsgsTotal.WithLabelValues("error", l.GetFileCtx(ctx), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_ERROR))).Inc()
 
 	if IsMsgEnabled(l.level_log, LEVEL_ERROR) {
 		if l.enable_scope_shown {
@@ -94,75 +99,57 @@ func (l *Logger) Error(msg string, opts ...LogType) {
 		}
 		args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 		if l.enable_file_shown {
-			args = append(args, logGroupFiles())
+			args = append(args, logGroupFiles(ctx))
 		}
 		l.logger.Error(msg, args...)
 	}
-
-}
-
-func (l *Logger) Errorln(a ...any) {
-	SetCallerSkip(4)
-	l.Error(fmt.Sprintln(a...))
-	UnsetCallerSkip()
-}
-
-func (l *Logger) ErrorCtx(ctx context.Context, msg string, opts ...LogType) {
-	SetCallerSkip(4)
-	l.Error(msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
 }
 
 // Fatal when encountered, Program is not allowed to run further with fatal
 func (l *Logger) Fatal(msg string, opts ...LogType) {
-	MetricMsgsTotal.WithLabelValues("panic", l.GetFile(), strconv.FormatBool(true)).Inc()
+	l.FatalCtx(WithCtxCallerSkip(context.Background(), 4), msg, opts...)
+}
+
+func (l *Logger) FatalCtx(ctx context.Context, msg string, opts ...LogType) {
+	opts = CtxOpts(ctx, opts...)
+	MetricMsgsTotal.WithLabelValues("panic", l.GetFileCtx(ctx), strconv.FormatBool(true)).Inc()
 
 	if l.enable_scope_shown {
 		opts = append(opts, String("scope", l.scope))
 	}
 	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	if l.enable_file_shown {
-		args = append(args, logGroupFiles())
+		args = append(args, logGroupFiles(ctx))
 	}
 	l.logger.Error(msg, args...)
 
 	os.Exit(1)
 }
-
-func (l *Logger) FatalCtx(ctx context.Context, msg string, opts ...LogType) {
-	SetCallerSkip(4)
-	l.Fatal(msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
-}
 func (l *Logger) Fatalln(a ...any) {
-	SetCallerSkip(4)
-	l.Fatal(fmt.Sprintln(a...))
-	UnsetCallerSkip()
+	l.FatalCtx(WithCtxCallerSkip(context.Background(), 4), fmt.Sprintln(a...))
 }
 
 func (l *Logger) Panic(msg string, opts ...LogType) {
-	MetricMsgsTotal.WithLabelValues("panic", l.GetFile(), strconv.FormatBool(true)).Inc()
+	l.PanicCtx(WithCtxCallerSkip(context.Background(), 4), msg, opts...)
+
+}
+
+func (l *Logger) PanicCtx(ctx context.Context, msg string, opts ...LogType) {
+	opts = CtxOpts(ctx, opts...)
+	MetricMsgsTotal.WithLabelValues("panic", l.GetFileCtx(ctx), strconv.FormatBool(true)).Inc()
 
 	if l.enable_scope_shown {
 		opts = append(opts, String("scope", l.scope))
 	}
 	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
 	if l.enable_file_shown {
-		args = append(args, logGroupFiles())
+		args = append(args, logGroupFiles(ctx))
 	}
 	l.logger.Error(msg, args...)
 	panic(msg)
 }
-
-func (l *Logger) PanicCtx(ctx context.Context, msg string, opts ...LogType) {
-	SetCallerSkip(4)
-	l.Panic(msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
-}
 func (l *Logger) Panicln(a ...any) {
-	SetCallerSkip(4)
-	l.Panic(fmt.Sprintln(a...))
-	UnsetCallerSkip()
+	l.PanicCtx(WithCtxCallerSkip(context.Background(), 4), fmt.Sprintln(a...))
 }
 func (l *Logger) CheckDebug(err error, msg string, opts ...LogType) bool {
 	if err == nil {
@@ -185,90 +172,67 @@ func (l *Logger) CheckDebugln(err error, a ...any) bool {
 	return l.CheckDebug(err, fmt.Sprintln(a...))
 }
 
-func (l *Logger) CheckWarn(err error, msg string, opts ...LogType) bool {
+func (l *Logger) CheckWarnCtx(ctx context.Context, err error, msg string, opts ...LogType) bool {
 	if err == nil {
 		return false
 	}
 	if !IsMsgEnabled(l.level_log, LEVEL_WARN) {
 		return true
 	}
-	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
-	args = append(args, slog.String("error", fmt.Sprintf("%v", err)))
-	SetCallerSkip(4)
-	l.logger.Warn(msg, args...)
-	UnsetCallerSkip()
+	opts = append(opts, OptError(err))
+	l.WarnCtx(WithCtxCallerSkip(ctx, 4), msg, opts...)
 	return true
 }
 
-func (l *Logger) CheckWarnCtx(ctx context.Context, err error, msg string, opts ...LogType) bool {
-	SetCallerSkip(5)
-	result := l.CheckWarn(err, msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
+func (l *Logger) CheckWarn(err error, msg string, opts ...LogType) bool {
+	result := l.CheckWarnCtx(WithCtxCallerSkip(context.Background(), 5), err, msg, opts...)
 	return result
 }
 
 func (l *Logger) CheckWarnln(err error, a ...any) bool {
-	SetCallerSkip(5)
-	result := l.CheckWarn(err, fmt.Sprintln(a...))
-	UnsetCallerSkip()
+	result := l.CheckWarnCtx(WithCtxCallerSkip(context.Background(), 5), err, fmt.Sprintln(a...))
 	return result
 }
 
-func (l *Logger) CheckError(err error, msg string, opts ...LogType) bool {
+func (l *Logger) CheckErrorCtx(ctx context.Context, err error, msg string, opts ...LogType) bool {
 	if err == nil {
 		return false
 	}
 	if !IsMsgEnabled(l.level_log, LEVEL_ERROR) {
 		return true
 	}
-	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
-	args = append(args, slog.String("error", fmt.Sprintf("%v", err)))
-	SetCallerSkip(4)
-	l.logger.Error(msg, args...)
-	UnsetCallerSkip()
+	opts = append(opts, OptError(err))
+	l.ErrorCtx(WithCtxCallerSkip(ctx, 4), msg, opts...)
 	return true
 }
 
-func (l *Logger) CheckErrorCtx(ctx context.Context, err error, msg string, opts ...LogType) bool {
-	SetCallerSkip(5)
-	result := l.CheckError(err, msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
-	return result
+func (l *Logger) CheckError(err error, msg string, opts ...LogType) bool {
+	return l.CheckErrorCtx(WithCtxCallerSkip(context.Background(), 5), err, msg, opts...)
 }
 
 func (l *Logger) CheckErrorln(err error, a ...any) bool {
-	SetCallerSkip(5)
-	result := l.CheckError(err, fmt.Sprintln(a...))
-	UnsetCallerSkip()
-	return result
+	return l.CheckErrorCtx(WithCtxCallerSkip(context.Background(), 5), err, fmt.Sprintln(a...))
 }
 
 // CheckFatal has shorter error output in comparison to CheckPanic
-func (l *Logger) CheckFatal(err error, msg string, opts ...LogType) {
+func (l *Logger) CheckFatalCtx(ctx context.Context, err error, msg string, opts ...LogType) {
 	if err == nil {
 		return
 	}
-	args := append([]SlogAttr{}, newSlogArgs(opts...)...)
-	args = append(args, slog.String("error", fmt.Sprintf("%v", err)))
-	SetCallerSkip(4)
-	l.logger.Error(msg, args...)
-	UnsetCallerSkip()
+	opts = append(opts, OptError(err))
+	l.ErrorCtx(WithCtxCallerSkip(ctx, 4), msg, opts...)
 	os.Exit(1)
 }
 
-func (l *Logger) CheckFatalCtx(ctx context.Context, err error, msg string, opts ...LogType) {
-	SetCallerSkip(5)
-	l.CheckFatal(err, msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
+func (l *Logger) CheckFatal(err error, msg string, opts ...LogType) {
+	l.CheckFatalCtx(WithCtxCallerSkip(context.Background(), 5), err, msg, opts...)
 }
 
 func (l *Logger) CheckFatalln(err error, a ...any) {
-	SetCallerSkip(5)
-	l.CheckFatal(err, fmt.Sprintln(a...))
-	UnsetCallerSkip()
+	l.CheckFatalCtx(WithCtxCallerSkip(context.Background(), 5), err, fmt.Sprintln(a...))
 }
 
-func (l *Logger) CheckPanic(err error, msg string, opts ...LogType) {
+func (l *Logger) CheckPanicCtx(ctx context.Context, err error, msg string, opts ...LogType) {
 	if err == nil {
 		return
 	}
@@ -277,20 +241,15 @@ func (l *Logger) CheckPanic(err error, msg string, opts ...LogType) {
 		slog.String("err_msg", fmt.Sprintf("%v", err)),
 		slog.String("err_type", fmt.Sprintf("%T", err)),
 	)
-	SetCallerSkip(4)
-	l.logger.Error(msg, args...)
-	UnsetCallerSkip()
+	opts = append(opts, OptError(err))
+	l.Error(msg, opts...)
 	panic_logger.Error(msg, args...)
 	panic(panic_str.String())
 }
 
-func (l *Logger) CheckPanicCtx(ctx context.Context, err error, msg string, opts ...LogType) {
-	SetCallerSkip(5)
-	l.CheckPanic(err, msg, CtxOpts(ctx, opts...)...)
-	UnsetCallerSkip()
+func (l *Logger) CheckPanic(err error, msg string, opts ...LogType) {
+	l.CheckPanicCtx(WithCtxCallerSkip(context.Background(), 5), err, msg, opts...)
 }
 func (l *Logger) CheckPanicln(err error, a ...any) {
-	SetCallerSkip(5)
-	l.CheckPanic(err, fmt.Sprintln(a...))
-	UnsetCallerSkip()
+	l.CheckPanicCtx(WithCtxCallerSkip(context.Background(), 5), err, fmt.Sprintln(a...))
 }

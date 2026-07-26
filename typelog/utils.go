@@ -20,12 +20,17 @@ func CompL[T any, V any](objs []T, lambda func(x T) V) []V {
 	return results
 }
 
-func logGroupFiles() slog.Attr {
+func logGroupFiles(ctx context.Context) slog.Attr {
 	ctx_skip := 3
-	if ctx_skip := CtxSkip.Value(TP_SKIP); ctx_skip != nil {
-		ctx_skip = ctx_skip.(int)
+	if ctx_value := ctx.Value(TP_SKIP); ctx_value != nil {
+		value, ok := ctx_value.(int)
+		if ok {
+			ctx_skip = value
+		}
 	}
 	file := getFileCaller(ctx_skip)
+	// for debug
+	// file = getFileCaller(ctx_skip) + fmt.Sprintf("-skip:%d", ctx_skip)
 
 	return slog.String("file", file)
 }

@@ -21,10 +21,13 @@ func CompL[T any, V any](objs []T, lambda func(x T) V) []V {
 }
 
 func logGroupFiles() slog.Attr {
-	return slog.Group("files",
-		"file3", GetCallingFile(3),
-		"file4", GetCallingFile(4),
-	)
+	ctx_skip := 3
+	if ctx_skip := CtxSkip.Value(TP_SKIP); ctx_skip != nil {
+		ctx_skip = ctx_skip.(int)
+	}
+	file := getFileCaller(ctx_skip)
+
+	return slog.String("file", file)
 }
 
 func GetCallingFile(level int) string {

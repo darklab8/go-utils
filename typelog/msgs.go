@@ -33,6 +33,7 @@ func (l *Logger) Debugln(a ...any) {
 func (l *Logger) InfoCtx(ctx context.Context, msg string, opts ...LogType) {
 	opts = CtxOpts(ctx, opts...)
 	MetricMsgsTotal.WithLabelValues("info", l.GetFileCtx(ctx), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_INFO))).Inc()
+	CountMsgsInfos++
 
 	if IsMsgEnabled(l.level_log, LEVEL_INFO) {
 		if l.enable_scope_shown {
@@ -63,6 +64,7 @@ func (l *Logger) Warn(msg string, opts ...LogType) {
 func (l *Logger) WarnCtx(ctx context.Context, msg string, opts ...LogType) {
 	opts = CtxOpts(ctx, opts...)
 	MetricMsgsTotal.WithLabelValues("warn", l.GetFileCtx(ctx), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_WARN))).Inc()
+	CountMsgsWarns++
 
 	if IsMsgEnabled(l.level_log, LEVEL_WARN) {
 		if l.enable_scope_shown {
@@ -92,6 +94,7 @@ func (l *Logger) Errorln(a ...any) {
 func (l *Logger) ErrorCtx(ctx context.Context, msg string, opts ...LogType) {
 	opts = CtxOpts(ctx, opts...)
 	MetricMsgsTotal.WithLabelValues("error", l.GetFileCtx(ctx), strconv.FormatBool(IsMsgEnabled(l.level_log, LEVEL_ERROR))).Inc()
+	CountMsgsErrors++
 
 	if IsMsgEnabled(l.level_log, LEVEL_ERROR) {
 		if l.enable_scope_shown {
@@ -113,6 +116,7 @@ func (l *Logger) Fatal(msg string, opts ...LogType) {
 func (l *Logger) FatalCtx(ctx context.Context, msg string, opts ...LogType) {
 	opts = CtxOpts(ctx, opts...)
 	MetricMsgsTotal.WithLabelValues("panic", l.GetFileCtx(ctx), strconv.FormatBool(true)).Inc()
+	CountMsgsPanics++
 
 	if l.enable_scope_shown {
 		opts = append(opts, String("scope", l.scope))
@@ -137,6 +141,7 @@ func (l *Logger) Panic(msg string, opts ...LogType) {
 func (l *Logger) PanicCtx(ctx context.Context, msg string, opts ...LogType) {
 	opts = CtxOpts(ctx, opts...)
 	MetricMsgsTotal.WithLabelValues("panic", l.GetFileCtx(ctx), strconv.FormatBool(true)).Inc()
+	CountMsgsPanics++
 
 	if l.enable_scope_shown {
 		opts = append(opts, String("scope", l.scope))
